@@ -34,17 +34,18 @@
 
     <div class="docs-content">
         <h1>🏗️ Архитектура проекта</h1>
-        
+
         <section id="overview">
             <h2>Обзор</h2>
             <p>METAIMPERIYA — это социальная сеть, построенная на <strong>HTML5, CSS3, Vanilla JavaScript</strong> и <strong>Firebase</strong>. Проект полностью адаптивен и работает на всех устройствах.</p>
-            
+
             <div class="info-box">
                 <strong>📌 Ключевые технологии:</strong>
                 <ul>
                     <li><strong>Frontend:</strong> HTML5, CSS3, JavaScript (ES6+)</li>
                     <li><strong>Backend:</strong> Firebase (Realtime Database, Auth, Storage)</li>
                     <li><strong>Хостинг:</strong> GitHub Pages</li>
+                    <li><strong>Домены:</strong> metaimperiya.com, docs.metaimperiya.com</li>
                 </ul>
             </div>
         </section>
@@ -87,37 +88,100 @@
             </div>
         </section>
 
+        <section id="frontend">
+            <h2>🎨 Frontend</h2>
+            <p>Вся логика интерфейса построена на чистом JavaScript без фреймворков. Это делает проект:</p>
+            <ul>
+                <li><strong>Быстрым</strong> — нет лишних зависимостей</li>
+                <li><strong>Понятным</strong> — код легко читать и менять</li>
+                <li><strong>Гибким</strong> — можно добавить любую функциональность</li>
+            </ul>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">📄 script.js — Основная логика (часть 1: Auth)</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="comment">// ================================================================
+// AUTH — АВТОРИЗАЦИЯ
+// ================================================================</span>
+
+<span class="comment">// Подключаем Firebase Auth</span>
+<span class="keyword">const</span> <span class="variable">auth</span> = <span class="variable">firebase</span>.<span class="function">auth</span>();
+<span class="keyword">const</span> <span class="variable">provider</span> = <span class="keyword">new</span> <span class="variable">firebase</span>.<span class="function">auth</span>.<span class="function">GoogleAuthProvider</span>();
+
+<span class="comment">// Слушаем изменения состояния авторизации</span>
+<span class="variable">auth</span>.<span class="function">onAuthStateChanged</span>(<span class="variable">user</span> => {
+    <span class="keyword">if</span> (<span class="variable">user</span>) {
+        <span class="comment">// Пользователь вошел</span>
+        <span class="variable">USER_UID</span> = <span class="variable">user</span>.<span class="variable">uid</span>;
+        <span class="variable">USER</span> = <span class="variable">user</span>.<span class="variable">displayName</span> || <span class="variable">user</span>.<span class="variable">email</span> || <span class="variable">user</span>.<span class="variable">uid</span>.<span class="function">slice</span>(<span class="number">0</span>, <span class="number">8</span>);
+        <span class="comment">// ... обновляем UI</span>
+    } <span class="keyword">else</span> {
+        <span class="comment">// Пользователь вышел</span>
+        <span class="variable">document</span>.<span class="function">getElementById</span>(<span class="string">'loginModal'</span>).<span class="variable">classList</span>.<span class="function">add</span>(<span class="string">'open'</span>);
+    }
+});
+
+<span class="comment">// Вход через Google</span>
+<span class="variable">document</span>.<span class="function">getElementById</span>(<span class="string">'googleBtn'</span>).<span class="function">addEventListener</span>(<span class="string">'click'</span>, () => {
+    <span class="variable">auth</span>.<span class="function">signInWithPopup</span>(<span class="variable">provider</span>);
+});
+
+<span class="comment">// Анонимный вход</span>
+<span class="keyword">function</span> <span class="function">loginName</span>() {
+    <span class="keyword">const</span> <span class="variable">name</span> = <span class="variable">document</span>.<span class="function">getElementById</span>(<span class="string">'nameInput'</span>).<span class="variable">value</span>.<span class="function">trim</span>();
+    <span class="keyword">if</span> (!<span class="variable">name</span>) { <span class="function">alert</span>(<span class="string">'Введите имя'</span>); <span class="keyword">return</span>; }
+    <span class="variable">auth</span>.<span class="function">signInAnonymously</span>();
+});</code></pre>
+            </div>
+        </section>
+
+        <section id="backend">
+            <h2>🔥 Backend (Firebase)</h2>
+            <p>Firebase используется для:</p>
+            <ul>
+                <li><strong>Аутентификации</strong> — Google и анонимный вход</li>
+                <li><strong>Базы данных</strong> — все данные хранятся в Realtime Database</li>
+                <li><strong>Хранилища</strong> — аватарки пользователей</li>
+            </ul>
+
+            <div class="info-box warning">
+                <strong>⚠️ Важно!</strong> Все правила безопасности настроены в Firebase Console.
+            </div>
+        </section>
+
         <section id="components">
             <h2>🧩 Компоненты</h2>
             <div class="component-grid">
                 <div class="component-card">
                     <h4>👤 Профиль</h4>
-                    <p>Аватарка, имя, био</p>
+                    <p>Аватарка, имя, био, списки друзей</p>
                     <span class="tag">user/*/index.html</span>
                 </div>
                 <div class="component-card">
                     <h4>🤝 Друзья</h4>
-                    <p>Добавление, удаление</p>
+                    <p>Добавление, удаление, запросы</p>
                     <span class="tag">script.js</span>
                 </div>
                 <div class="component-card">
                     <h4>💬 Чаты</h4>
-                    <p>Личные сообщения</p>
+                    <p>Личные сообщения в реальном времени</p>
                     <span class="tag">script.js</span>
                 </div>
                 <div class="component-card">
                     <h4>👥 Группы</h4>
-                    <p>Общие чаты</p>
+                    <p>Общие чаты по интересам</p>
                     <span class="tag">group/*/index.html</span>
                 </div>
                 <div class="component-card">
                     <h4>🔔 Уведомления</h4>
-                    <p>Оповещения</p>
+                    <p>Оповещения о сообщениях и запросах</p>
                     <span class="tag">script.js</span>
                 </div>
                 <div class="component-card">
                     <h4>👑 Админка</h4>
-                    <p>Управление</p>
+                    <p>Управление пользователями и контентом</p>
                     <span class="tag">admin/index.html</span>
                 </div>
             </div>
