@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Архитектура | METAIMPERIYA Docs</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<header class="docs-header">
+    <div class="header-inner">
+        <a href="/" class="logo">📚 METAIMPERIYA Docs</a>
+        <nav class="header-nav">
+            <a href="/">Главная</a>
+            <a href="/pages/architecture.html" class="active">Архитектура</a>
+            <a href="/pages/firebase-setup.html">Firebase</a>
+            <a href="https://metaimperiya.com" target="_blank">🌐 Сайт</a>
+        </nav>
+    </div>
+</header>
+
+<main class="docs-container">
+    <aside class="sidebar">
+        <h4>📚 Содержание</h4>
+        <ul>
+            <li><a href="#overview">Обзор</a></li>
+            <li><a href="#structure">Структура файлов</a></li>
+            <li><a href="#frontend">Frontend</a></li>
+            <li><a href="#backend">Backend (Firebase)</a></li>
+            <li><a href="#components">Компоненты</a></li>
+        </ul>
+    </aside>
+
+    <div class="docs-content">
+        <h1>🏗️ Архитектура проекта</h1>
+        
+        <section id="overview">
+            <h2>Обзор</h2>
+            <p>METAIMPERIYA — это социальная сеть, построенная на <strong>HTML5, CSS3, Vanilla JavaScript</strong> и <strong>Firebase</strong>. Проект полностью адаптивен и работает на всех устройствах.</p>
+            
+            <div class="info-box">
+                <strong>📌 Ключевые технологии:</strong>
+                <ul>
+                    <li><strong>Frontend:</strong> HTML5, CSS3, JavaScript (ES6+)</li>
+                    <li><strong>Backend:</strong> Firebase (Realtime Database, Auth, Storage)</li>
+                    <li><strong>Хостинг:</strong> GitHub Pages</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="structure">
+            <h2>📁 Структура файлов</h2>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">📂 Структура проекта</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code>metaimperiya/
+├── index.html              # Главная страница
+├── style.css               # Глобальные стили
+├── script.js               # Основная логика
+├── 404.html                # Страница 404
+├── user/                   # Профили пользователей
+│   ├── playerlikee/
+│   │   └── index.html      # @playerlikee
+│   ├── jobsmoscowru/
+│   │   └── index.html      # @jobsmoscowru
+│   └── allrabotniki/
+│       └── index.html      # @allrabotniki
+├── group/                  # Страницы групп
+│   ├── general/
+│   │   └── index.html      # Общий
+│   ├── sport/
+│   │   └── index.html      # Спорт
+│   ├── games/
+│   │   └── index.html      # Игры
+│   └── music/
+│       └── index.html      # Музыка
+├── admin/                  # Админ-панель
+│   └── index.html
+└── docs/                   # Документация
+    ├── index.html
+    ├── style.css
+    ├── script.js
+    └── pages/</code></pre>
+            </div>
+        </section>
+
+        <section id="components">
+            <h2>🧩 Компоненты</h2>
+            <div class="component-grid">
+                <div class="component-card">
+                    <h4>👤 Профиль</h4>
+                    <p>Аватарка, имя, био</p>
+                    <span class="tag">user/*/index.html</span>
+                </div>
+                <div class="component-card">
+                    <h4>🤝 Друзья</h4>
+                    <p>Добавление, удаление</p>
+                    <span class="tag">script.js</span>
+                </div>
+                <div class="component-card">
+                    <h4>💬 Чаты</h4>
+                    <p>Личные сообщения</p>
+                    <span class="tag">script.js</span>
+                </div>
+                <div class="component-card">
+                    <h4>👥 Группы</h4>
+                    <p>Общие чаты</p>
+                    <span class="tag">group/*/index.html</span>
+                </div>
+                <div class="component-card">
+                    <h4>🔔 Уведомления</h4>
+                    <p>Оповещения</p>
+                    <span class="tag">script.js</span>
+                </div>
+                <div class="component-card">
+                    <h4>👑 Админка</h4>
+                    <p>Управление</p>
+                    <span class="tag">admin/index.html</span>
+                </div>
+            </div>
+        </section>
+
+        <div class="nav-links">
+            <a href="/pages/firebase-setup.html" class="next-link">➡️ Настройка Firebase</a>
+        </div>
+    </div>
+</main>
+
+<footer class="docs-footer">
+    <p>© 2024 METAIMPERIYA Docs</p>
+</footer>
+
+<script src="../script.js"></script>
+</body>
+</html>
