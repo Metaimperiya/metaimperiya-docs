@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель | METAIMPERIYA Docs</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<header class="docs-header">
+    <div class="header-inner">
+        <a href="/metaimperiya-docs/" class="logo">📚 METAIMPERIYA Docs</a>
+        <nav class="header-nav">
+            <a href="/metaimperiya-docs/">Главная</a>
+            <a href="/metaimperiya-docs/pages/architecture.html">Архитектура</a>
+            <a href="/metaimperiya-docs/pages/firebase-setup.html">Firebase</a>
+            <a href="/metaimperiya-docs/pages/user-system.html">Пользователи</a>
+            <a href="/metaimperiya-docs/pages/friends-system.html">Друзья</a>
+            <a href="/metaimperiya-docs/pages/chat-system.html">Чаты</a>
+            <a href="/metaimperiya-docs/pages/admin-panel.html" class="active">Админ-панель</a>
+            <a href="https://metaimperiya.com" target="_blank">🌐 Сайт</a>
+        </nav>
+    </div>
+</header>
+
+<main class="docs-container">
+    <aside class="sidebar">
+        <h4>📚 Содержание</h4>
+        <ul>
+            <li><a href="#overview">Обзор</a></li>
+            <li><a href="#admin-uids">UID Админов</a></li>
+            <li><a href="#check-access">Проверка доступа</a></li>
+            <li><a href="#admin-panel-ui">Админ-панель UI</a></li>
+            <li><a href="#delete-user">Удаление пользователя</a></li>
+            <li><a href="#clear-data">Очистка данных</a></li>
+            <li><a href="#username-management">Управление username</a></li>
+        </ul>
+    </aside>
+
+    <div class="docs-content">
+        <h1>👑 Админ-панель</h1>
+
+        <section id="overview">
+            <h2>Обзор</h2>
+            <p>Админ-панель в METAIMPERIYA предназначена для управления пользователями и контентом. Доступ к ней открывается автоматически при входе с аккаунта, чей UID есть в списке администраторов.</p>
+
+            <div class="info-box">
+                <strong>📌 Ключевые принципы:</strong>
+                <ul>
+                    <li><strong>Автоматическое распознавание</strong> — админка включается по UID</li>
+                    <li><strong>Безопасность</strong> — все функции проверяют права</li>
+                    <li><strong>Простота</strong> — управление в пару кликов</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="admin-uids">
+            <h2>UID Админов</h2>
+            <p>Список администраторов жёстко закодирован в массиве. Если ты хочешь добавить нового админа — просто добавь его UID в этот список.</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">👑 Список администраторов</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="comment">// ================================================================
+// АДМИНЫ — ХАРДКОД UID
+// ================================================================</span>
+
+<span class="keyword">const</span> <span class="variable">ADMIN_UIDS</span> = [
+    <span class="string">"ayXehcol9FgAQU6tZuup7aSaRoV2"</span>,  <span class="comment">// Все Работники</span>
+    <span class="string">"pWB0nGVvVXc4je6466ss7IwBm9G2"</span>,  <span class="comment">// Джобс Москва</span>
+    <span class="string">"ANR62p3qcjOe2ALsdVvJHUNCCV42"</span>   <span class="comment">// Плеер Лайки</span>
+];
+
+<span class="keyword">let</span> <span class="variable">isAdmin</span> = <span class="keyword">false</span>;</code></pre>
+            </div>
+        </section>
+
+        <section id="check-access">
+            <h2>Проверка доступа</h2>
+            <p>Функция проверяет, есть ли текущий пользователь в списке администраторов.</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">🔐 Проверка админ-доступа</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="comment">// ================================================================
+// ПРОВЕРКА АДМИН-ДОСТУПА
+// ================================================================</span>
+
+<span class="keyword">function</span> <span class="function">checkAdminAccess</span>(<span class="variable">uid</span>) {
+    <span class="keyword">const</span> <span class="variable">wasAdmin</span> = <span class="variable">isAdmin</span>;
+    <span class="variable">isAdmin</span> = <span class="variable">ADMIN_UIDS</span>.<span class="function">includes</span>(<span class="variable">uid</span>);
+    
+    <span class="keyword">if</span> (<span class="variable">wasAdmin</span> !== <span class="variable">isAdmin</span>) {
+        <span class="function">updateAdminUI</span>();
+    }
+    
+    <span class="function">console</span>.<span class="function">log</span>(<span class="string">`👑 Админ-режим: ${isAdmin ? 'ВКЛЮЧЕН' : 'ВЫКЛЮЧЕН'}`</span>);
+    <span class="keyword">return</span> <span class="variable">isAdmin</span>;
+}
+
+<span class="comment">// Вызывается при входе</span>
+<span class="variable">auth</span>.<span class="function">onAuthStateChanged</span>(<span class="variable">user</span> => {
+    <span class="keyword">if</span> (<span class="variable">user</span>) {
+        <span class="variable">USER_UID</span> = <span class="variable">user</span>.<span class="variable">uid</span>;
+        <span class="function">checkAdminAccess</span>(<span class="variable">USER_UID</span>);
+        <span class="comment">// ...</span>
+    }
+});</code></pre>
+            </div>
+        </section>
+
+        <section id="admin-panel-ui">
+            <h2>Админ-панель UI</h2>
+            <p>Панель появляется в хедере только у администраторов.</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">🖥️ Админ-панель HTML</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="comment">&lt;!-- ===== ADMIN PANEL ===== --&gt;</span>
+&lt;<span class="keyword">div</span> <span class="variable">class</span>=<span class="string">"admin-panel"</span> <span class="variable">id</span>=<span class="string">"adminPanel"</span>&gt;
+    &lt;<span class="keyword">div</span> <span class="variable">style</span>=<span class="string">"display:flex;gap:8px;align-items:center;flex-wrap:wrap;"</span>&gt;
+        &lt;<span class="keyword">span</span> <span class="variable">style</span>=<span class="string">"font-weight:600;color:#1877f2;font-size:13px;"</span>&gt;👑 Админ-панель&lt;/<span class="keyword">span</span>&gt;
+        &lt;<span class="keyword">button</span> <span class="variable">class</span>=<span class="string">"btn-action admin-only"</span> <span class="variable">onclick</span>=<span class="string">"adminDeleteAllUsers()"</span> <span class="variable">style</span>=<span class="string">"background:#e74c3c;color:white;"</span>&gt;🗑 Удалить всех&lt;/<span class="keyword">button</span>&gt;
+        &lt;<span class="keyword">button</span> <span class="variable">class</span>=<span class="string">"btn-action admin-only"</span> <span class="variable">onclick</span>=<span class="string">"adminClearRooms()"</span> <span class="variable">style</span>=<span class="string">"background:#e74c3c;color:white;"</span>&gt;🧹 Очистить комнаты&lt;/<span class="keyword">button</span>&gt;
+        &lt;<span class="keyword">button</span> <span class="variable">class</span>=<span class="string">"btn-action admin-only"</span> <span class="variable">onclick</span>=<span class="string">"adminClearNotifications()"</span> <span class="variable">style</span>=<span class="string">"background:#e74c3c;color:white;"</span>&gt;🔔 Очистить уведомления&lt;/<span class="keyword">button</span>&gt;
+        &lt;<span class="keyword">button</span> <span class="variable">class</span>=<span class="string">"btn-action admin-only"</span> <span class="variable">onclick</span>=<span class="string">"adminExportData()"</span> <span class="variable">style</span>=<span class="string">"background:#27ae60;color:white;"</span>&gt;📤 Экспорт&lt;/<span class="keyword">button</span>&gt;
+        &lt;<span class="keyword">button</span> <span class="variable">class</span>=<span class="string">"btn-action admin-only"</span> <span class="variable">onclick</span>=<span class="string">"adminShowUsers()"</span> <span class="variable">style</span>=<span class="string">"background:#8e44ad;color:white;"</span>&gt;👥 Список пользователей&lt;/<span class="keyword">button</span>&gt;
+        &lt;<span class="keyword">button</span> <span class="variable">class</span>=<span class="string">"btn-action admin-only"</span> <span class="variable">onclick</span>=<span class="string">"adminSetUsernamePrompt()"</span> <span class="variable">style</span>=<span class="string">"background:#2980b9;color:white;"</span>&gt;✏️ Установить username&lt;/<span class="keyword">button</span>&gt;
+        &lt;<span class="keyword">button</span> <span class="variable">class</span>=<span class="string">"btn-action admin-only"</span> <span class="variable">onclick</span>=<span class="string">"adminRemoveUsernamePrompt()"</span> <span class="variable">style</span>=<span class="string">"background:#e67e22;color:white;"</span>&gt;🗑 Удалить username&lt;/<span class="keyword">button</span>&gt;
+    &lt;/<span class="keyword">div</span>&gt;
+&lt;/<span class="keyword">div</span>&gt;</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">🎨 Стили для админ-панели</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="comment">/* ===== АДМИН-ПАНЕЛЬ ===== */</span>
+<span class="variable">.admin-panel</span> {
+    <span class="variable">display</span>: <span class="keyword">none</span>;
+    <span class="variable">background</span>: <span class="string">#e8f0fe</span>;
+    <span class="variable">padding</span>: <span class="number">8px</span> <span class="number">12px</span>;
+    <span class="variable">border-radius</span>: <span class="number">8px</span>;
+    <span class="variable">border</span>: <span class="number">1px</span> <span class="keyword">solid</span> <span class="string">#1877f2</span>;
+    <span class="variable">margin-bottom</span>: <span class="number">12px</span>;
+}
+
+<span class="variable">.admin-mode</span> <span class="variable">.admin-panel</span> {
+    <span class="variable">display</span>: <span class="keyword">block</span> <span class="variable">!important</span>;
+}
+
+<span class="variable">.admin-mode</span> <span class="variable">.admin-only</span> {
+    <span class="variable">display</span>: <span class="keyword">inline-flex</span> <span class="variable">!important</span>;
+}
+
+<span class="variable">.admin-only</span> {
+    <span class="variable">display</span>: <span class="keyword">none</span> <span class="variable">!important</span>;
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="delete-user">
+            <h2>Удаление пользователя</h2>
+            <p>Администратор может удалить любого пользователя. Это действие необратимо.</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">🗑 Удаление пользователя</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="comment">// ================================================================
+// УДАЛЕНИЕ ПОЛЬЗОВАТЕЛЯ
+// ================================================================</span>
+
+<span class="keyword">function</span> <span class="function">adminDeleteUser</span>(<span class="variable">uid</span>) {
+    <span class="keyword">if</span> (!<span class="variable">isAdmin</span>) {
+        <span class="function">console</span>.<span class="function">warn</span>(<span class="string">'❌ Доступ запрещен'</span>);
+        <span class="keyword">return</span>;
+    }
+    
+    <span class="keyword">if</span> (!<span class="variable">uid</span> || <span class="variable">uid</span> === <span class="variable">USER_UID</span>) {
+        <span class="function">alert</span>(<span class="string">'Нельзя удалить себя'</span>);
+        <span class="keyword">return</span>;
+    }
+    
+    <span class="keyword">if</span> (!<span class="function">confirm</span>(<span class="string">'Удалить пользователя? Это необратимо!'</span>)) <span class="keyword">return</span>;
+    
+    <span class="keyword">const</span> <span class="variable">updates</span> = {};
+    <span class="variable">updates</span>[<span class="string">'sites/'</span> + <span class="variable">SITE</span> + <span class="string">'/users/'</span> + <span class="variable">uid</span>] = <span class="keyword">null</span>;
+    <span class="variable">updates</span>[<span class="string">'sites/'</span> + <span class="variable">SITE</span> + <span class="string">'/all_users/'</span> + <span class="variable">uid</span>] = <span class="keyword">null</span>;
+    <span class="variable">updates</span>[<span class="string">'sites/'</span> + <span class="variable">SITE</span> + <span class="string">'/friends/'</span> + <span class="variable">uid</span>] = <span class="keyword">null</span>;
+    <span class="variable">updates</span>[<span class="string">'sites/'</span> + <span class="variable">SITE</span> + <span class="string">'/followers/'</span> + <span class="variable">uid</span>] = <span class="keyword">null</span>;
+    <span class="variable">updates</span>[<span class="string">'sites/'</span> + <span class="variable">SITE</span> + <span class="string">'/notifications/'</span> + <span class="variable">uid</span>] = <span class="keyword">null</span>;
+    <span class="variable">updates</span>[<span class="string">'sites/'</span> + <span class="variable">SITE</span> + <span class="string">'/users_by_name/'</span>] = <span class="keyword">null</span>;
+    
+    <span class="variable">db</span>.<span class="function">ref</span>().<span class="function">update</span>(<span class="variable">updates</span>)
+        .<span class="function">then</span>(() => {
+            <span class="function">alert</span>(<span class="string">'✅ Пользователь удален'</span>);
+            <span class="function">loadPeople</span>();
+        })
+        .<span class="function">catch</span>(<span class="variable">err</span> => {
+            <span class="function">console</span>.<span class="function">error</span>(<span class="string">'❌ Ошибка:'</span>, <span class="variable">err</span>);
+            <span class="function">alert</span>(<span class="string">'Ошибка удаления'</span>);
+        });
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="clear-data">
+            <h2>Очистка данных</h2>
+            <p>Администратор может очистить все комнаты или все уведомления.</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">🧹 Очистка данных</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="comment">// ================================================================
+// ОЧИСТКА КОМНАТ
+// ================================================================</span>
+
+<span class="keyword">function</span> <span class="function">adminClearRooms</span>() {
+    <span class="keyword">if</span> (!<span class="variable">isAdmin</span>) {
+        <span class="function">console</span>.<span class="function">warn</span>(<span class="string">'❌ Доступ запрещен'</span>);
+        <span class="keyword">return</span>;
+    }
+    
+    <span class="keyword">if</span> (!<span class="function">confirm</span>(<span class="string">'Очистить все комнаты?'</span>)) <span class="keyword">return</span>;
+    
+    <span class="variable">db</span>.<span class="function">ref</span>(<span class="string">'sites/'</span> + <span class="variable">SITE</span> + <span class="string">'/rooms'</span>).<span class="function">remove</span>()
+        .<span class="function">then</span>(() => {
+            <span class="variable">db</span>.<span class="function">ref</span>(<span class="string">'sites/'</span> + <span class="variable">SITE</span> + <span class="string">'/room_users/'</span>).<span class="function">remove</span>();
+            <span class="function">alert</span>(<span class="string">'✅ Комнаты очищены'</span>);
+            <span class="function">loadRooms</span>();
+        })
+        .<span class="function">catch</span>(<span class="variable">err</span> => {
+            <span class="function">console</span>.<span class="function">error</span>(<span class="string">'❌ Ошибка:'</span>, <span class="variable">err</span>);
+            <span class="function">alert</span>(<span class="string">'Ошибка очистки'</span>);
+        });
+}
+
+<span class="comment">// ================================================================
+// ОЧИСТКА УВЕДОМЛЕНИЙ
+// ================================================================</span>
+
+<span class="keyword">function</span> <span class="function">adminClearNotifications</span>() {
+    <span class="keyword">if</span> (!<span class="variable">isAdmin</span>) {
+        <span class="function">console</span>.<span class="function">warn</span>(<span class="string">'❌ Доступ запрещен'</span>);
+        <span class="keyword">return</span>;
+    }
+    
+    <span class="keyword">if</span> (!<span class="function">confirm</span>(<span class="string">'Очистить все уведомления?'</span>)) <span class="keyword">return</span>;
+    
+    <span class="variable">db</span>.<span class="function">ref</span>(<span class="string">'sites/'</span> + <span class="variable">SITE</span> + <span class="string">'/notifications/'</span>).<span class="function">remove</span>()
+        .<span class="function">then</span>(() => {
+            <span class="function">alert</span>(<span class="string">'✅ Уведомления очищены'</span>);
+        })
+        .<span class="function">catch</span>(<span class="variable">err</span> => {
+            <span class="function">console</span>.<span class="function">error</span>(<span class="string">'❌ Ошибка:'</span>, <span class="variable">err</span>);
+            <span class="function">alert</span>(<span class="string">'Ошибка очистки'</span>);
+        });
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="username-management">
+            <h2>Управление username</h2>
+            <p>Администратор может вручную устанавливать и удалять username для любого пользователя.</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">✏️ Установка username</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="comment">// ================================================================
+// УСТАНОВКА USERNAME
+// ================================================================</span>
+
+<span class="keyword">function</span> <span class="function">adminSetUsername</span>(<span class="variable">uid</span>, <span class="variable">customUsername</span>) {
+    <span class="keyword">if</span> (!<span class="variable">isAdmin</span>) {
+        <span class="function">console</span>.<span class="function">warn</span>(<span class="string">'❌ Доступ запрещен'</span>);
+        <span class="keyword">return</span>;
+    }
+    
+    <span class="keyword">if</span> (!<span class="variable">uid</span> || !<span class="variable">customUsername</span>) {
+        <span class="function">alert</span>(<span class="string">'❌ Нужно указать UID и username'</span>);
+        <span class="keyword">return</span>;
+    }
+    
+    <span class="comment">// Проверяем, что username не занят</span>
+    <span class="variable">db</span>.<span class="function">ref</span>(<span class="string">'sites/'</span> + <span class="variable">SITE</span> + <span class="string">'/users_by_name/'</span> + <span class="variable">customUsername</span>)
+        .<span class="function">once</span>(<span class="string">'value'</span>, <span class="variable">snap</span> => {
+            <span class="keyword">if</span> (<span class="variable">snap</span>.<span class="function">val</span>() && <span class="variable">snap</span>.<span class="function">val</span>() !== <span class="variable">uid</span>) {
+                <span class="function">alert</span>(<span class="string">`❌ Username "${customUsername}" уже занят!`</span>);
+                <span class="keyword">return</span>;
+            }
+            
+            <span class="keyword">const</span> <span class="variable">updates</span> = {};
+            <span class="variable">updates</span>[<span class="string">'sites/'</span> + <span class="variable">SITE</span> + <span class="string">'/users_by_name/'</span> + <span class="variable">customUsername</span>] = <span class="variable">uid</span>;
+            <span class="variable">updates</span>[<span class="string">'sites/'</span> + <span class="variable">SITE</span> + <span class="string">'/users/'</span> + <span class="variable">uid</span> + <span class="string">'/username'</span>] = <span class="variable">customUsername</span>;
+            <span class="variable">updates</span>[<span class="string">'sites/'</span> + <span class="variable">SITE</span> + <span class="string">'/all_users/'</span> + <span class="variable">uid</span> + <span class="string">'/username'</span>] = <span class="variable">customUsername</span>;
+            
+            <span class="variable">db</span>.<span class="function">ref</span>().<span class="function">update</span>(<span class="variable">updates</span>)
+                .<span class="function">then</span>(() => {
+                    <span class="function">alert</span>(<span class="string">`✅ Username "${customUsername}" привязан!`</span>);
+                    <span class="function">loadPeople</span>();
+                })
+                .<span class="function">catch</span>(<span class="variable">err</span> => {
+                    <span class="function">console</span>.<span class="function">error</span>(<span class="string">'❌ Ошибка:'</span>, <span class="variable">err</span>);
+                    <span class="function">alert</span>(<span class="string">'Ошибка сохранения'</span>);
+                });
+        });
+}</code></pre>
+            </div>
+        </section>
+
+        <div class="nav-links">
+            <a href="/metaimperiya-docs/pages/chat-system.html" class="prev-link">⬅️ Чаты</a>
+            <a href="/metaimperiya-docs/pages/seo-optimization.html" class="next-link">➡️ SEO</a>
+        </div>
+    </div>
+</main>
+
+<footer class="docs-footer">
+    <p>© 2024 METAIMPERIYA Docs</p>
+</footer>
+
+<script src="../script.js"></script>
+</body>
+</html>
