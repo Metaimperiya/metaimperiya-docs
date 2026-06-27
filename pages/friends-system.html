@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Друзья | METAIMPERIYA Docs</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<header class="docs-header">
+    <div class="header-inner">
+        <a href="/metaimperiya-docs/" class="logo">📚 METAIMPERIYA Docs</a>
+        <nav class="header-nav">
+            <a href="/metaimperiya-docs/">Главная</a>
+            <a href="/metaimperiya-docs/pages/architecture.html">Архитектура</a>
+            <a href="/metaimperiya-docs/pages/firebase-setup.html">Firebase</a>
+            <a href="/metaimperiya-docs/pages/user-system.html">Пользователи</a>
+            <a href="/metaimperiya-docs/pages/friends-system.html" class="active">Друзья</a>
+            <a href="https://metaimperiya.com" target="_blank">🌐 Сайт</a>
+        </nav>
+    </div>
+</header>
+
+<main class="docs-container">
+    <aside class="sidebar">
+        <h4>📚 Содержание</h4>
+        <ul>
+            <li><a href="#overview">Обзор</a></li>
+            <li><a href="#statuses">Статусы дружбы</a></li>
+            <li><a href="#send-request">Отправка запроса</a></li>
+            <li><a href="#handle-request">Обработка запроса</a></li>
+            <li><a href="#remove">Удаление из друзей</a></li>
+            <li><a href="#atomic">Атомарное обновление</a></li>
+            <li><a href="#data">Структура данных</a></li>
+        </ul>
+    </aside>
+
+    <div class="docs-content">
+        <h1>🤝 Система друзей</h1>
+
+        <section id="overview">
+            <h2>Обзор</h2>
+            <p>Система друзей в METAIMPERIYA работает по принципу <strong>"запрос → подтверждение → друзья"</strong>. Весь процесс построен на атомарных обновлениях Firebase, чтобы статус всегда был синхронизирован у обоих пользователей.</p>
+
+            <div class="info-box">
+                <strong>📌 Ключевые принципы:</strong>
+                <ul>
+                    <li><strong>Атомарность</strong> — оба статуса обновляются одновременно</li>
+                    <li><strong>Реальное время</strong> — изменения видны мгновенно через <code>on('value')</code></li>
+                    <li><strong>Единая кнопка</strong> — один клик управляет всеми состояниями</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="statuses">
+            <h2>Статусы дружбы</h2>
+            <p>У каждого пользователя по отношению к другому может быть один из трёх статусов:</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">📊 Статусы дружбы</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="comment">// ================================================================
+// СТАТУСЫ ДРУЖБЫ
+// ================================================================</span>
+
+<span class="comment">// 1. none — нет связи</span>
+<span class="comment">//    Кнопка: "➕ Добавить в друзья"</span>
+
+<span class="comment">// 2. pending — запрос отправлен (ожидает подтверждения)</span>
+<span class="comment">//    Кнопка: "⏳ Запрос отправлен"</span>
+
+<span class="comment">// 3. friend — в друзьях</span>
+<span class="comment">//    Кнопка: "✓ В друзьях"</span></code></pre>
+            </div>
+        </section>
+
+        <section id="send-request">
+            <h2>Отправка запроса</h2>
+            <p>При нажатии на кнопку "Добавить" создаётся запись <code>pending</code> в Firebase для обоих пользователей одновременно.</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">📤 Отправка запроса</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="comment">// ================================================================
+// ОТПРАВКА ЗАПРОСА В ДРУЗЬЯ
+// ================================================================</span>
+
+<span class="keyword">function</span> <span class="function">sendFriendRequest</span>(<span class="variable">targetUid</span>) {
+    <span class="keyword">if</span> (!<span class="variable">USER_UID</span>) {
+        <span class="function">alert</span>(<span class="string">'Войдите!'</span>);
+        <span class="keyword">return</span>;
+    }
+    
+    <span class="comment">// Проверяем текущий статус</span>
+    <span class="variable">db</span>.<span class="function">ref</span>(<span class="string">'sites/'</span> + <span class="variable">SITE</span> + <span class="string">'/friends/'</span> + <span class="variable">USER_UID</span> + <span class="string">'/'</span> + <span class="variable">targetUid</span>)
+        .<span class="function">once</span>(<span class="string">'value'</span>, <span class="variable">snap</span> => {
+            <span class="keyword">const</span> <span class="variable">status</span> = <span class="variable">snap</span>.<span class="function">val</span>();
+            
+            <span class="keyword">if</span> (<span class="variable">status</span> === <span class="string">'friend'</span>) {
+                <span class="function">alert</span>(<span class="string">'✅ Уже в друзьях'</span>);
+                <span class="keyword">return</span>;
+            }
+            
+            <span class="keyword">if</span> (<span class="variable">status</span> === <span class="string">'pending'</span>) {
+                <span class="comment">// Отменяем запрос</span>
+                <span class="function">updateFriendStatus</span>(<span class="variable">USER_UID</span>, <span class="variable">targetUid</span>, <span class="keyword">null</span>);
+                <span class="keyword">return</span>;
+            }
+            
+            <span class="comment">// Отправляем запрос — атомарное создание pending</span>
+            <span class="function">updateFriendStatus</span>(<span class="variable">USER_UID</span>, <span class="variable">targetUid</span>, <span class="string">'pending'</span>);
+            
+            <span class="comment">// Уведомление</span>
+            <span class="function">sendNotification</span>(<span class="variable">targetUid</span>, {
+                <span class="variable">type</span>: <span class="string">'friend_request'</span>,
+                <span class="variable">from</span>: <span class="variable">USER_UID</span>,
+                <span class="variable">text</span>: <span class="string">`${USER} отправил(а) запрос в друзья`</span>,
+                <span class="variable">timestamp</span>: <span class="variable">Date</span>.<span class="function">now</span>()
+            });
+        });
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="handle-request">
+            <h2>Обработка запроса</h2>
+            <p>Когда пользователь получает запрос, он может принять или отклонить его. Принятие меняет статус на <code>friend</code>.</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">✅ Принятие запроса</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="comment">// ================================================================
+// ПРИНЯТИЕ ЗАПРОСА
+// ================================================================</span>
+
+<span class="keyword">function</span> <span class="function">acceptFriendRequest</span>(<span class="variable">targetUid</span>) {
+    <span class="keyword">if</span> (!<span class="variable">USER_UID</span>) {
+        <span class="function">alert</span>(<span class="string">'Войдите!'</span>);
+        <span class="keyword">return</span>;
+    }
+    
+    <span class="comment">// Атомарное обновление</span>
+    <span class="function">updateFriendStatus</span>(<span class="variable">USER_UID</span>, <span class="variable">targetUid</span>, <span class="string">'friend'</span>);
+    
+    <span class="comment">// Уведомление</span>
+    <span class="function">sendNotification</span>(<span class="variable">targetUid</span>, {
+        <span class="variable">type</span>: <span class="string">'friend_accepted'</span>,
+        <span class="variable">from</span>: <span class="variable">USER_UID</span>,
+        <span class="variable">text</span>: <span class="string">`${USER} принял(а) ваш запрос в друзья`</span>,
+        <span class="variable">timestamp</span>: <span class="variable">Date</span>.<span class="function">now</span>()
+    });
+    
+    <span class="function">alert</span>(<span class="string">'✅ Дружба подтверждена!'</span>);
+}
+
+<span class="comment">// ================================================================
+// ОТКЛОНЕНИЕ ЗАПРОСА
+// ================================================================</span>
+
+<span class="keyword">function</span> <span class="function">declineFriendRequest</span>(<span class="variable">targetUid</span>) {
+    <span class="keyword">if</span> (!<span class="variable">USER_UID</span>) {
+        <span class="function">alert</span>(<span class="string">'Войдите!'</span>);
+        <span class="keyword">return</span>;
+    }
+    
+    <span class="comment">// Удаляем только запрос, подписка остаётся</span>
+    <span class="keyword">const</span> <span class="variable">updates</span> = {};
+    <span class="variable">updates</span>[<span class="string">'sites/'</span> + <span class="variable">SITE</span> + <span class="string">'/friends/'</span> + <span class="variable">USER_UID</span> + <span class="string">'/'</span> + <span class="variable">targetUid</span>] = <span class="keyword">null</span>;
+    <span class="variable">updates</span>[<span class="string">'sites/'</span> + <span class="variable">SITE</span> + <span class="string">'/friends/'</span> + <span class="variable">targetUid</span> + <span class="string">'/'</span> + <span class="variable">USER_UID</span>] = <span class="keyword">null</span>;
+    <span class="variable">db</span>.<span class="function">ref</span>().<span class="function">update</span>(<span class="variable">updates</span>);
+    
+    <span class="function">alert</span>(<span class="string">'❌ Запрос отклонен'</span>);
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="remove">
+            <h2>Удаление из друзей</h2>
+            <p>При удалении статус <code>friend</code> удаляется у обоих пользователей.</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">🗑 Удаление из друзей</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="comment">// ================================================================
+// УДАЛЕНИЕ ИЗ ДРУЗЕЙ
+// ================================================================</span>
+
+<span class="keyword">function</span> <span class="function">removeFriend</span>(<span class="variable">targetUid</span>) {
+    <span class="keyword">if</span> (!<span class="variable">USER_UID</span>) {
+        <span class="function">alert</span>(<span class="string">'Войдите!'</span>);
+        <span class="keyword">return</span>;
+    }
+    
+    <span class="keyword">if</span> (!<span class="function">confirm</span>(<span class="string">'Удалить из друзей?'</span>)) <span class="keyword">return</span>;
+    
+    <span class="comment">// Атомарное удаление</span>
+    <span class="function">updateFriendStatus</span>(<span class="variable">USER_UID</span>, <span class="variable">targetUid</span>, <span class="keyword">null</span>);
+    
+    <span class="function">alert</span>(<span class="string">'❌ Пользователь удален из друзей'</span>);
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="atomic">
+            <h2>Атомарное обновление</h2>
+            <p>Это главная функция, которая гарантирует синхронизацию статусов у обоих пользователей.</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">⚡ Атомарное обновление статуса</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="comment">// ================================================================
+// АТОМАРНОЕ ОБНОВЛЕНИЕ СТАТУСА
+// ================================================================</span>
+
+<span class="keyword">function</span> <span class="function">updateFriendStatus</span>(<span class="variable">myUid</span>, <span class="variable">targetUid</span>, <span class="variable">status</span>) {
+    <span class="keyword">if</span> (!<span class="variable">myUid</span> || !<span class="variable">targetUid</span>) {
+        <span class="function">console</span>.<span class="function">error</span>(<span class="string">'❌ Ошибка: отсутствуют UID'</span>);
+        <span class="keyword">return</span>;
+    }
+    
+    <span class="keyword">const</span> <span class="variable">updates</span> = {};
+    <span class="keyword">const</span> <span class="variable">path1</span> = <span class="string">'sites/'</span> + <span class="variable">SITE</span> + <span class="string">'/friends/'</span> + <span class="variable">myUid</span> + <span class="string">'/'</span> + <span class="variable">targetUid</span>;
+    <span class="keyword">const</span> <span class="variable">path2</span> = <span class="string">'sites/'</span> + <span class="variable">SITE</span> + <span class="string">'/friends/'</span> + <span class="variable">targetUid</span> + <span class="string">'/'</span> + <span class="variable">myUid</span>;
+    
+    <span class="keyword">if</span> (<span class="variable">status</span> === <span class="string">'friend'</span>) {
+        <span class="variable">updates</span>[<span class="variable">path1</span>] = <span class="string">'friend'</span>;
+        <span class="variable">updates</span>[<span class="variable">path2</span>] = <span class="string">'friend'</span>;
+        <span class="variable">updates</span>[<span class="string">'sites/'</span> + <span class="variable">SITE</span> + <span class="string">'/followers/'</span> + <span class="variable">targetUid</span> + <span class="string">'/'</span> + <span class="variable">myUid</span>] = <span class="keyword">true</span>;
+    } <span class="keyword">else</span> <span class="keyword">if</span> (<span class="variable">status</span> === <span class="string">'pending'</span>) {
+        <span class="variable">updates</span>[<span class="variable">path1</span>] = <span class="string">'pending'</span>;
+        <span class="variable">updates</span>[<span class="variable">path2</span>] = <span class="string">'pending'</span>;
+        <span class="variable">updates</span>[<span class="string">'sites/'</span> + <span class="variable">SITE</span> + <span class="string">'/followers/'</span> + <span class="variable">targetUid</span> + <span class="string">'/'</span> + <span class="variable">myUid</span>] = <span class="keyword">true</span>;
+    } <span class="keyword">else</span> <span class="keyword">if</span> (<span class="variable">status</span> === <span class="keyword">null</span>) {
+        <span class="variable">updates</span>[<span class="variable">path1</span>] = <span class="keyword">null</span>;
+        <span class="variable">updates</span>[<span class="variable">path2</span>] = <span class="keyword">null</span>;
+        <span class="variable">updates</span>[<span class="string">'sites/'</span> + <span class="variable">SITE</span> + <span class="string">'/followers/'</span> + <span class="variable">targetUid</span> + <span class="string">'/'</span> + <span class="variable">myUid</span>] = <span class="keyword">null</span>;
+    }
+    
+    <span class="comment">// АТОМАРНОЕ ОБНОВЛЕНИЕ — оба пути одновременно</span>
+    <span class="variable">db</span>.<span class="function">ref</span>().<span class="function">update</span>(<span class="variable">updates</span>);
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="data">
+            <h2>📊 Структура данных в Firebase</h2>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">📊 Структура друзей</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="comment">// ================================================================
+// СТРУКТУРА ДРУЗЕЙ В FIREBASE
+// ================================================================</span>
+
+<span class="comment">// friends — статусы дружбы</span>
+<span class="variable">sites</span>/<span class="variable">metaimperiya</span>/<span class="variable">friends</span>/{
+    <span class="variable">uid_1</span>/{
+        <span class="variable">uid_2</span>: <span class="string">"friend"</span>,      <span class="comment">// в друзьях</span>
+        <span class="variable">uid_3</span>: <span class="string">"pending"</span>     <span class="comment">// запрос отправлен</span>
+    },
+    <span class="variable">uid_2</span>/{
+        <span class="variable">uid_1</span>: <span class="string">"friend"</span>       <span class="comment">// в друзьях (синхронизировано)</span>
+    }
+}
+
+<span class="comment">// followers — подписчики</span>
+<span class="variable">sites</span>/<span class="variable">metaimperiya</span>/<span class="variable">followers</span>/{
+    <span class="variable">uid_1</span>/{
+        <span class="variable">uid_2</span>: <span class="keyword">true</span>,         <span class="comment">// uid_2 подписан на uid_1</span>
+        <span class="variable">uid_3</span>: <span class="keyword">true</span>
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <div class="nav-links">
+            <a href="/metaimperiya-docs/pages/user-system.html" class="prev-link">⬅️ Пользователи</a>
+            <a href="/metaimperiya-docs/pages/chat-system.html" class="next-link">➡️ Чаты</a>
+        </div>
+    </div>
+</main>
+
+<footer class="docs-footer">
+    <p>© 2024 METAIMPERIYA Docs</p>
+</footer>
+
+<script src="../script.js"></script>
+</body>
+</html>
