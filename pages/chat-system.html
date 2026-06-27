@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Чаты | METAIMPERIYA Docs</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<header class="docs-header">
+    <div class="header-inner">
+        <a href="/metaimperiya-docs/" class="logo">📚 METAIMPERIYA Docs</a>
+        <nav class="header-nav">
+            <a href="/metaimperiya-docs/">Главная</a>
+            <a href="/metaimperiya-docs/pages/architecture.html">Архитектура</a>
+            <a href="/metaimperiya-docs/pages/firebase-setup.html">Firebase</a>
+            <a href="/metaimperiya-docs/pages/user-system.html">Пользователи</a>
+            <a href="/metaimperiya-docs/pages/friends-system.html">Друзья</a>
+            <a href="/metaimperiya-docs/pages/chat-system.html" class="active">Чаты</a>
+            <a href="https://metaimperiya.com" target="_blank">🌐 Сайт</a>
+        </nav>
+    </div>
+</header>
+
+<main class="docs-container">
+    <aside class="sidebar">
+        <h4>📚 Содержание</h4>
+        <ul>
+            <li><a href="#overview">Обзор</a></li>
+            <li><a href="#chat-id">Генерация ID чата</a></li>
+            <li><a href="#open-chat">Открытие чата</a></li>
+            <li><a href="#send-message">Отправка сообщения</a></li>
+            <li><a href="#load-messages">Загрузка сообщений</a></li>
+            <li><a href="#notifications">Уведомления о сообщениях</a></li>
+            <li><a href="#data">Структура данных</a></li>
+        </ul>
+    </aside>
+
+    <div class="docs-content">
+        <h1>💬 Система чатов</h1>
+
+        <section id="overview">
+            <h2>Обзор</h2>
+            <p>В METAIMPERIYA реализованы <strong>личные сообщения</strong> между пользователями. Каждый диалог — это отдельная комната с уникальным ID, который одинаков для обоих собеседников.</p>
+
+            <div class="info-box">
+                <strong>📌 Ключевые принципы:</strong>
+                <ul>
+                    <li><strong>Уникальный ID</strong> — генерируется из UID обоих пользователей</li>
+                    <li><strong>Реальное время</strong> — сообщения приходят мгновенно через <code>on('child_added')</code></li>
+                    <li><strong>Уведомления</strong> — приходит оповещение о новом сообщении</li>
+                    <li><strong>Fixed-окно</strong> — чат открывается поверх всего интерфейса</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="chat-id">
+            <h2>Генерация ID чата</h2>
+            <p>ID чата создаётся путём сортировки UID двух пользователей:</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">🔑 Генерация ID чата</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="comment">// ================================================================
+// ГЕНЕРАЦИЯ УНИКАЛЬНОГО ID ЧАТА
+// ================================================================</span>
+
+<span class="comment">// UID сортируются, чтобы у обоих собеседников был одинаковый ID</span>
+<span class="keyword">const</span> <span class="variable">chatId</span> = [<span class="variable">USER_UID</span>, <span class="variable">targetUid</span>].<span class="function">sort</span>().<span class="function">join</span>(<span class="string">'_'</span>);
+
+<span class="comment">// Пример</span>
+<span class="comment">// USER_UID = "uid_abc"</span>
+<span class="comment">// targetUid = "uid_xyz"</span>
+<span class="comment">// chatId = "uid_abc_uid_xyz"</span>
+
+<span class="comment">// Путь в Firebase</span>
+<span class="keyword">const</span> <span class="variable">path</span> = <span class="string">'dms/'</span> + <span class="variable">SITE</span> + <span class="string">'/'</span> + <span class="variable">chatId</span> + <span class="string">'/messages'</span>;</code></pre>
+            </div>
+        </section>
+
+        <section id="open-chat">
+            <h2>Открытие чата</h2>
+            <p>Функция открывает окно чата и подгружает историю сообщений.</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">📂 Открытие чата</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="comment">// ================================================================
+// ОТКРЫТИЕ ЧАТА
+// ================================================================</span>
+
+<span class="keyword">function</span> <span class="function">openPrivateChat</span>(<span class="variable">targetUid</span>) {
+    <span class="keyword">if</span> (!<span class="variable">USER_UID</span>) {
+        <span class="function">alert</span>(<span class="string">'Войдите!'</span>);
+        <span class="keyword">return</span>;
+    }
+    
+    <span class="keyword">if</span> (<span class="variable">targetUid</span> === <span class="variable">USER_UID</span>) {
+        <span class="function">alert</span>(<span class="string">'Нельзя писать себе'</span>);
+        <span class="keyword">return</span>;
+    }
+    
+    <span class="comment">// Генерируем ID чата</span>
+    <span class="keyword">const</span> <span class="variable">chatId</span> = [<span class="variable">USER_UID</span>, <span class="variable">targetUid</span>].<span class="function">sort</span>().<span class="function">join</span>(<span class="string">'_'</span>);
+    <span class="keyword">const</span> <span class="variable">path</span> = <span class="string">'dms/'</span> + <span class="variable">SITE</span> + <span class="string">'/'</span> + <span class="variable">chatId</span> + <span class="string">'/messages'</span>;
+    
+    <span class="comment">// Закрываем все модалки</span>
+    <span class="function">closeNotifications</span>();
+    <span class="function">closeProfileView</span>();
+    <span class="function">closeContextMenu</span>();
+    
+    <span class="variable">CURRENT_ROOM</span> = <span class="variable">chatId</span>;
+    
+    <span class="comment">// Показываем окно чата</span>
+    <span class="variable">document</span>.<span class="function">getElementById</span>(<span class="string">'chatWindow'</span>).<span class="variable">classList</span>.<span class="function">add</span>(<span class="string">'active'</span>);
+    
+    <span class="comment">// Загружаем имя собеседника</span>
+    <span class="variable">db</span>.<span class="function">ref</span>(<span class="string">'sites/'</span> + <span class="variable">SITE</span> + <span class="string">'/all_users/'</span> + <span class="variable">targetUid</span>)
+        .<span class="function">once</span>(<span class="string">'value'</span>, <span class="variable">snap</span> => {
+            <span class="keyword">const</span> <span class="variable">user</span> = <span class="variable">snap</span>.<span class="function">val</span>() || {};
+            <span class="keyword">const</span> <span class="variable">name</span> = <span class="variable">user</span>.<span class="variable">name</span> || <span class="string">'Собеседник'</span>;
+            <span class="variable">document</span>.<span class="function">getElementById</span>(<span class="string">'chatTitle'</span>).<span class="variable">textContent</span> = <span class="string">'💬 '</span> + <span class="variable">name</span>;
+        });
+    
+    <span class="function">loadChat</span>(<span class="variable">path</span>);
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="send-message">
+            <h2>Отправка сообщения</h2>
+            <p>Сообщение сохраняется в Firebase и отправляется получателю.</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">📤 Отправка сообщения</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="comment">// ================================================================
+// ОТПРАВКА СООБЩЕНИЯ
+// ================================================================</span>
+
+<span class="keyword">function</span> <span class="function">sendChat</span>() {
+    <span class="keyword">const</span> <span class="variable">input</span> = <span class="variable">document</span>.<span class="function">getElementById</span>(<span class="string">'chatInput'</span>);
+    <span class="keyword">const</span> <span class="variable">text</span> = <span class="variable">input</span>.<span class="variable">value</span>.<span class="function">trim</span>();
+    
+    <span class="keyword">if</span> (!<span class="variable">text</span> || !<span class="variable">CURRENT_ROOM</span>) <span class="keyword">return</span>;
+    
+    <span class="keyword">const</span> <span class="variable">path</span> = <span class="string">'dms/'</span> + <span class="variable">SITE</span> + <span class="string">'/'</span> + <span class="variable">CURRENT_ROOM</span> + <span class="string">'/messages'</span>;
+    
+    <span class="comment">// Определяем собеседника</span>
+    <span class="keyword">const</span> <span class="variable">parts</span> = <span class="variable">CURRENT_ROOM</span>.<span class="function">split</span>(<span class="string">'_'</span>);
+    <span class="keyword">const</span> <span class="variable">targetUid</span> = <span class="variable">parts</span>[<span class="number">0</span>] === <span class="variable">USER_UID</span> ? <span class="variable">parts</span>[<span class="number">1</span>] : <span class="variable">parts</span>[<span class="number">0</span>];
+    
+    <span class="comment">// Сохраняем сообщение</span>
+    <span class="variable">db</span>.<span class="function">ref</span>(<span class="variable">path</span>).<span class="function">push</span>({
+        <span class="variable">nick</span>: <span class="variable">USER</span>,
+        <span class="variable">text</span>: <span class="variable">text</span>,
+        <span class="variable">time</span>: <span class="keyword">new</span> <span class="variable">Date</span>().<span class="function">toLocaleTimeString</span>([], { <span class="variable">hour</span>: <span class="string">'2-digit'</span>, <span class="variable">minute</span>: <span class="string">'2-digit'</span> }),
+        <span class="variable">timestamp</span>: <span class="variable">Date</span>.<span class="function">now</span>()
+    });
+    
+    <span class="comment">// Отправляем уведомление собеседнику</span>
+    <span class="function">sendNotification</span>(<span class="variable">targetUid</span>, {
+        <span class="variable">type</span>: <span class="string">'message'</span>,
+        <span class="variable">from</span>: <span class="variable">USER_UID</span>,
+        <span class="variable">text</span>: <span class="string">`${USER}: ${text}`</span>,
+        <span class="variable">timestamp</span>: <span class="variable">Date</span>.<span class="function">now</span>()
+    });
+    
+    <span class="variable">input</span>.<span class="variable">value</span> = <span class="string">''</span>;
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="load-messages">
+            <h2>Загрузка сообщений</h2>
+            <p>Сообщения загружаются в реальном времени через слушатель <code>on('value')</code>.</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">📥 Загрузка сообщений</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="comment">// ================================================================
+// ЗАГРУЗКА СООБЩЕНИЙ В РЕАЛЬНОМ ВРЕМЕНИ
+// ================================================================</span>
+
+<span class="keyword">function</span> <span class="function">loadChat</span>(<span class="variable">path</span>) {
+    <span class="comment">// Отписываемся от старого слушателя</span>
+    <span class="keyword">if</span> (<span class="variable">chatUnsub</span>) {
+        <span class="keyword">if</span> (<span class="keyword">typeof</span> <span class="variable">chatUnsub</span> === <span class="string">'string'</span>) {
+            <span class="variable">db</span>.<span class="function">ref</span>(<span class="variable">chatUnsub</span>).<span class="function">off</span>(<span class="string">'value'</span>);
+        }
+        <span class="variable">chatUnsub</span> = <span class="keyword">null</span>;
+    }
+    
+    <span class="keyword">const</span> <span class="variable">box</span> = <span class="variable">document</span>.<span class="function">getElementById</span>(<span class="string">'chatMessages'</span>);
+    <span class="variable">box</span>.<span class="variable">innerHTML</span> = <span class="string">'&lt;div style="color:#65676b;text-align:center;padding:20px;"&gt;⏳ Загрузка...&lt;/div&gt;'</span>;
+    
+    <span class="variable">chatUnsub</span> = <span class="variable">path</span>;
+    
+    <span class="comment">// Слушатель изменений</span>
+    <span class="variable">db</span>.<span class="function">ref</span>(<span class="variable">path</span>)
+        .<span class="function">orderByChild</span>(<span class="string">'timestamp'</span>)
+        .<span class="function">on</span>(<span class="string">'value'</span>, <span class="variable">snap</span> => {
+            <span class="variable">box</span>.<span class="variable">innerHTML</span> = <span class="string">''</span>;
+            
+            <span class="keyword">if</span> (!<span class="variable">snap</span>.<span class="function">exists</span>()) {
+                <span class="variable">box</span>.<span class="variable">innerHTML</span> = <span class="string">'&lt;div style="color:#65676b;text-align:center;padding:20px;"&gt;Сообщений нет&lt;/div&gt;'</span>;
+                <span class="keyword">return</span>;
+            }
+            
+            <span class="variable">snap</span>.<span class="function">forEach</span>(<span class="variable">s</span> => {
+                <span class="keyword">const</span> <span class="variable">m</span> = <span class="variable">s</span>.<span class="function">val</span>();
+                <span class="keyword">const</span> <span class="variable">isSelf</span> = <span class="variable">m</span>.<span class="variable">nick</span> === <span class="variable">USER</span>;
+                <span class="keyword">const</span> <span class="variable">div</span> = <span class="variable">document</span>.<span class="function">createElement</span>(<span class="string">'div'</span>);
+                <span class="variable">div</span>.<span class="variable">className</span> = <span class="string">'msg'</span> + (<span class="variable">isSelf</span> ? <span class="string">' self'</span> : <span class="string">''</span>);
+                <span class="variable">div</span>.<span class="variable">innerHTML</span> = <span class="string">`
+                    &lt;span class="author"&gt;${esc(m.nick||'?')}&lt;/span&gt;
+                    &lt;span class="time"&gt;${m.time||''}&lt;/span&gt;
+                    &lt;div&gt;${esc(m.text||'')}&lt;/div&gt;
+                `</span>;
+                <span class="variable">box</span>.<span class="function">appendChild</span>(<span class="variable">div</span>);
+            });
+            
+            <span class="variable">box</span>.<span class="variable">scrollTop</span> = <span class="variable">box</span>.<span class="variable">scrollHeight</span>;
+        });
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="notifications">
+            <h2>Уведомления о сообщениях</h2>
+            <p>При отправке сообщения собеседнику приходит уведомление.</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">🔔 Уведомления</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="comment">// ================================================================
+// УВЕДОМЛЕНИЯ
+// ================================================================</span>
+
+<span class="keyword">function</span> <span class="function">sendNotification</span>(<span class="variable">targetUid</span>, <span class="variable">data</span>) {
+    <span class="keyword">if</span> (!<span class="variable">USER_UID</span>) <span class="keyword">return</span>;
+    <span class="keyword">if</span> (!<span class="variable">targetUid</span> || <span class="variable">targetUid</span> === <span class="variable">USER_UID</span>) {
+        <span class="function">console</span>.<span class="function">warn</span>(<span class="string">'❌ Нельзя отправить уведомление себе'</span>);
+        <span class="keyword">return</span>;
+    }
+    
+    <span class="keyword">const</span> <span class="variable">notifRef</span> = <span class="variable">db</span>.<span class="function">ref</span>(<span class="string">'sites/'</span> + <span class="variable">SITE</span> + <span class="string">'/notifications/'</span> + <span class="variable">targetUid</span>).<span class="function">push</span>();
+    <span class="variable">notifRef</span>.<span class="function">set</span>({
+        ...<span class="variable">data</span>,
+        <span class="variable">read</span>: <span class="keyword">false</span>,
+        <span class="variable">fromName</span>: <span class="variable">USER</span>,
+        <span class="variable">fromUid</span>: <span class="variable">USER_UID</span>
+    });
+}
+
+<span class="comment">// Обработка клика по уведомлению</span>
+<span class="keyword">function</span> <span class="function">handleNotifClick</span>(<span class="variable">notifId</span>, <span class="variable">fromUid</span>, <span class="variable">type</span>) {
+    <span class="keyword">if</span> (<span class="variable">type</span> === <span class="string">'message'</span>) {
+        <span class="function">closeNotifications</span>();
+        <span class="function">openPrivateChat</span>(<span class="variable">fromUid</span>);
+        <span class="comment">// Удаляем уведомление</span>
+        <span class="variable">db</span>.<span class="function">ref</span>(<span class="string">'sites/'</span> + <span class="variable">SITE</span> + <span class="string">'/notifications/'</span> + <span class="variable">USER_UID</span> + <span class="string">'/'</span> + <span class="variable">notifId</span>).<span class="function">remove</span>();
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="data">
+            <h2>📊 Структура данных в Firebase</h2>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">📊 Структура сообщений</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="comment">// ================================================================
+// СТРУКТУРА СООБЩЕНИЙ В FIREBASE
+// ================================================================</span>
+
+<span class="comment">// dms — личные сообщения</span>
+<span class="variable">sites</span>/<span class="variable">metaimperiya</span>/<span class="variable">dms</span>/{
+    <span class="variable">uid_1_uid_2</span>/{
+        <span class="variable">messages</span>/{
+            <span class="variable">msg_id_1</span>: {
+                <span class="variable">nick</span>: <span class="string">"PLAYER Likee"</span>,
+                <span class="variable">text</span>: <span class="string">"Привет!"</span>,
+                <span class="variable">time</span>: <span class="string">"12:00"</span>,
+                <span class="variable">timestamp</span>: <span class="number">1234567890</span>
+            },
+            <span class="variable">msg_id_2</span>: {
+                <span class="variable">nick</span>: <span class="string">"Jobs Moscow"</span>,
+                <span class="variable">text</span>: <span class="string">"Здравствуй!"</span>,
+                <span class="variable">time</span>: <span class="string">"12:01"</span>,
+                <span class="variable">timestamp</span>: <span class="number">1234567891</span>
+            }
+        }
+    }
+}
+
+<span class="comment">// notifications — уведомления</span>
+<span class="variable">sites</span>/<span class="variable">metaimperiya</span>/<span class="variable">notifications</span>/{
+    <span class="variable">uid_1</span>/{
+        <span class="variable">notif_id_1</span>: {
+            <span class="variable">type</span>: <span class="string">"message"</span>,
+            <span class="variable">from</span>: <span class="string">"uid_2"</span>,
+            <span class="variable">fromName</span>: <span class="string">"Jobs Moscow"</span>,
+            <span class="variable">text</span>: <span class="string">"PLAYER Likee: Привет!"</span>,
+            <span class="variable">read</span>: <span class="keyword">false</span>,
+            <span class="variable">timestamp</span>: <span class="number">1234567890</span>
+        }
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <div class="nav-links">
+            <a href="/metaimperiya-docs/pages/friends-system.html" class="prev-link">⬅️ Друзья</a>
+            <a href="/metaimperiya-docs/pages/admin-panel.html" class="next-link">➡️ Админ-панель</a>
+        </div>
+    </div>
+</main>
+
+<footer class="docs-footer">
+    <p>© 2024 METAIMPERIYA Docs</p>
+</footer>
+
+<script src="../script.js"></script>
+</body>
+</html>
