@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEO | METAIMPERIYA Docs</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<header class="docs-header">
+    <div class="header-inner">
+        <a href="/metaimperiya-docs/" class="logo">📚 METAIMPERIYA Docs</a>
+        <nav class="header-nav">
+            <a href="/metaimperiya-docs/">Главная</a>
+            <a href="/metaimperiya-docs/pages/architecture.html">Архитектура</a>
+            <a href="/metaimperiya-docs/pages/firebase-setup.html">Firebase</a>
+            <a href="/metaimperiya-docs/pages/user-system.html">Пользователи</a>
+            <a href="/metaimperiya-docs/pages/friends-system.html">Друзья</a>
+            <a href="/metaimperiya-docs/pages/chat-system.html">Чаты</a>
+            <a href="/metaimperiya-docs/pages/admin-panel.html">Админ-панель</a>
+            <a href="/metaimperiya-docs/pages/seo-optimization.html" class="active">SEO</a>
+            <a href="https://metaimperiya.com" target="_blank">🌐 Сайт</a>
+        </nav>
+    </div>
+</header>
+
+<main class="docs-container">
+    <aside class="sidebar">
+        <h4>📚 Содержание</h4>
+        <ul>
+            <li><a href="#overview">Обзор</a></li>
+            <li><a href="#meta-tags">Мета-теги</a></li>
+            <li><a href="#dynamic-meta">Динамическая генерация</a></li>
+            <li><a href="#seo-pages">SEO-страницы</a></li>
+            <li><a href="#sitemap">Sitemap</a></li>
+            <li><a href="#robots">Robots.txt</a></li>
+            <li><a href="#admin-seo">Управление SEO</a></li>
+        </ul>
+    </aside>
+
+    <div class="docs-content">
+        <h1>🔍 SEO-оптимизация</h1>
+
+        <section id="overview">
+            <h2>Обзор</h2>
+            <p>METAIMPERIYA использует несколько подходов для SEO-оптимизации, чтобы страницы хорошо индексировались поисковыми системами.</p>
+
+            <div class="info-box">
+                <strong>📌 Ключевые принципы:</strong>
+                <ul>
+                    <li><strong>Динамические мета-теги</strong> — генерируются для каждой страницы</li>
+                    <li><strong>Open Graph</strong> — для соцсетей</li>
+                    <li><strong>Статические URL</strong> — каждый профиль — отдельная страница</li>
+                    <li><strong>Sitemap</strong> — карта сайта для Google</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="meta-tags">
+            <h2>Мета-теги</h2>
+            <p>В проекте используются стандартные мета-теги для SEO.</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">📄 Базовые мета-теги</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="comment">&lt;!-- ===== SEO META ТЕГИ ===== --&gt;</span>
+&lt;<span class="keyword">title</span> <span class="variable">id</span>=<span class="string">"seoTitle"</span>&gt;METAIMPERIYA - Социальная сеть&lt;/<span class="keyword">title</span>&gt;
+&lt;<span class="keyword">meta</span> <span class="variable">name</span>=<span class="string">"description"</span> <span class="variable">id</span>=<span class="string">"seoDescription"</span> <span class="variable">content</span>=<span class="string">"Социальная сеть нового поколения"</span>&gt;
+&lt;<span class="keyword">meta</span> <span class="variable">name</span>=<span class="string">"keywords"</span> <span class="variable">id</span>=<span class="string">"seoKeywords"</span> <span class="variable">content</span>=<span class="string">"социальная сеть, общение, друзья"</span>&gt;
+
+<span class="comment">&lt;!-- Open Graph для соцсетей --&gt;</span>
+&lt;<span class="keyword">meta</span> <span class="variable">property</span>=<span class="string">"og:title"</span> <span class="variable">id</span>=<span class="string">"ogTitle"</span> <span class="variable">content</span>=<span class="string">"METAIMPERIYA"</span>&gt;
+&lt;<span class="keyword">meta</span> <span class="variable">property</span>=<span class="string">"og:description"</span> <span class="variable">id</span>=<span class="string">"ogDescription"</span> <span class="variable">content</span>=<span class="string">"Социальная сеть нового поколения"</span>&gt;
+&lt;<span class="keyword">meta</span> <span class="variable">property</span>=<span class="string">"og:type"</span> <span class="variable">content</span>=<span class="string">"website"</span>&gt;
+&lt;<span class="keyword">meta</span> <span class="variable">property</span>=<span class="string">"og:url"</span> <span class="variable">id</span>=<span class="string">"ogUrl"</span> <span class="variable">content</span>=<span class="string">"https://metaimperiya.com"</span>&gt;
+&lt;<span class="keyword">meta</span> <span class="variable">property</span>=<span class="string">"og:image"</span> <span class="variable">id</span>=<span class="string">"ogImage"</span> <span class="variable">content</span>=<span class="string">"https://metaimperiya.com/og-image.jpg"</span>&gt;
+
+<span class="comment">&lt;!-- Canonical URL --&gt;</span>
+&lt;<span class="keyword">link</span> <span class="variable">rel</span>=<span class="string">"canonical"</span> <span class="variable">id</span>=<span class="string">"canonicalUrl"</span> <span class="variable">href</span>=<span class="string">"https://metaimperiya.com/"</span>&gt;
+
+<span class="comment">&lt;!-- Robots --&gt;</span>
+&lt;<span class="keyword">meta</span> <span class="variable">name</span>=<span class="string">"robots"</span> <span class="variable">id</span>=<span class="string">"robotsMeta"</span> <span class="variable">content</span>=<span class="string">"index, follow"</span>&gt;</code></pre>
+            </div>
+        </section>
+
+        <section id="dynamic-meta">
+            <h2>Динамическая генерация мета-тегов</h2>
+            <p>Функция <code>generateMeta(data)</code> обновляет мета-теги на основе данных из Firebase.</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">⚡ Генерация мета-тегов</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="comment">// ================================================================
+// ГЕНЕРАЦИЯ МЕТА-ТЕГОВ
+// ================================================================</span>
+
+<span class="keyword">function</span> <span class="function">generateMeta</span>(<span class="variable">data</span>) {
+    <span class="keyword">if</span> (!<span class="variable">data</span>) {
+        <span class="comment">// Дефолтные мета-теги</span>
+        <span class="variable">document</span>.<span class="function">getElementById</span>(<span class="string">'seoTitle'</span>).<span class="variable">textContent</span> = <span class="string">'METAIMPERIYA - Социальная сеть'</span>;
+        <span class="variable">document</span>.<span class="function">getElementById</span>(<span class="string">'seoDescription'</span>).<span class="variable">textContent</span> = <span class="string">'Социальная сеть нового поколения'</span>;
+        <span class="variable">document</span>.<span class="function">getElementById</span>(<span class="string">'seoKeywords'</span>).<span class="variable">textContent</span> = <span class="string">'социальная сеть, общение, друзья'</span>;
+        <span class="keyword">return</span>;
+    }
+    
+    <span class="comment">// Устанавливаем мета-теги из данных</span>
+    <span class="keyword">if</span> (<span class="variable">data</span>.<span class="variable">title</span>) {
+        <span class="variable">document</span>.<span class="function">getElementById</span>(<span class="string">'seoTitle'</span>).<span class="variable">textContent</span> = <span class="variable">data</span>.<span class="variable">title</span> + <span class="string">' | METAIMPERIYA'</span>;
+        <span class="variable">document</span>.<span class="function">getElementById</span>(<span class="string">'ogTitle'</span>).<span class="variable">content</span> = <span class="variable">data</span>.<span class="variable">title</span> + <span class="string">' | METAIMPERIYA'</span>;
+        <span class="variable">document</span>.<span class="variable">title</span> = <span class="variable">data</span>.<span class="variable">title</span> + <span class="string">' | METAIMPERIYA'</span>;
+    }
+    
+    <span class="keyword">if</span> (<span class="variable">data</span>.<span class="variable">description</span>) {
+        <span class="variable">document</span>.<span class="function">getElementById</span>(<span class="string">'seoDescription'</span>).<span class="variable">textContent</span> = <span class="variable">data</span>.<span class="variable">description</span>;
+        <span class="variable">document</span>.<span class="function">getElementById</span>(<span class="string">'ogDescription'</span>).<span class="variable">content</span> = <span class="variable">data</span>.<span class="variable">description</span>;
+    }
+    
+    <span class="keyword">if</span> (<span class="variable">data</span>.<span class="variable">keywords</span>) {
+        <span class="variable">document</span>.<span class="function">getElementById</span>(<span class="string">'seoKeywords'</span>).<span class="variable">textContent</span> = <span class="variable">data</span>.<span class="variable">keywords</span>;
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="seo-pages">
+            <h2>SEO-страницы</h2>
+            <p>Для каждого пользователя и группы можно создать отдельную SEO-страницу с уникальными мета-тегами.</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">📄 Загрузка SEO-страницы</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="comment">// ================================================================
+// ЗАГРУЗКА SEO-СТРАНИЦЫ
+// ================================================================</span>
+
+<span class="keyword">function</span> <span class="function">loadSEOPage</span>(<span class="variable">path</span>) {
+    <span class="keyword">const</span> <span class="variable">slug</span> = <span class="variable">path</span>.<span class="function">startsWith</span>(<span class="string">'/'</span>) ? <span class="variable">path</span>.<span class="function">substring</span>(<span class="number">1</span>) : <span class="variable">path</span>;
+    <span class="keyword">if</span> (!<span class="variable">slug</span>) <span class="keyword">return</span> <span class="keyword">false</span>;
+    
+    <span class="comment">// Проверяем пользователя</span>
+    <span class="variable">db</span>.<span class="function">ref</span>(<span class="string">'sites/'</span> + <span class="variable">SITE</span> + <span class="string">'/users_by_name/'</span> + <span class="variable">slug</span>).<span class="function">once</span>(<span class="string">'value'</span>, <span class="variable">snap</span> => {
+        <span class="keyword">const</span> <span class="variable">uid</span> = <span class="variable">snap</span>.<span class="function">val</span>();
+        <span class="keyword">if</span> (<span class="variable">uid</span>) {
+            <span class="variable">db</span>.<span class="function">ref</span>(<span class="string">'sites/'</span> + <span class="variable">SITE</span> + <span class="string">'/all_users/'</span> + <span class="variable">uid</span>).<span class="function">once</span>(<span class="string">'value'</span>, <span class="variable">userSnap</span> => {
+                <span class="keyword">const</span> <span class="variable">user</span> = <span class="variable">userSnap</span>.<span class="function">val</span>();
+                <span class="keyword">if</span> (<span class="variable">user</span>) {
+                    <span class="keyword">const</span> <span class="variable">seoData</span> = {
+                        <span class="variable">title</span>: <span class="variable">user</span>.<span class="variable">name</span> || <span class="variable">slug</span>,
+                        <span class="variable">description</span>: <span class="variable">user</span>.<span class="variable">bio</span> || <span class="string">`Профиль пользователя ${user.name || slug}`</span>,
+                        <span class="variable">keywords</span>: <span class="string">`${user.name || slug}, профиль, пользователь`</span>,
+                        <span class="variable">image</span>: <span class="variable">user</span>.<span class="variable">avatarUrl</span> || <span class="string">'https://metaimperiya.com/og-image.jpg'</span>
+                    };
+                    <span class="function">generateMeta</span>(<span class="variable">seoData</span>);
+                }
+            });
+        }
+    });
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="sitemap">
+            <h2>🗺️ Sitemap</h2>
+            <p>Генерация Sitemap для Google. Собирает все страницы: пользователей, группы и SEO-страницы.</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">🗺️ Генерация Sitemap</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="comment">// ================================================================
+// ГЕНЕРАЦИЯ SITEMAP
+// ================================================================</span>
+
+<span class="keyword">function</span> <span class="function">adminGenerateSitemap</span>() {
+    <span class="keyword">if</span> (!<span class="variable">isAdmin</span>) {
+        <span class="function">console</span>.<span class="function">warn</span>(<span class="string">'❌ Доступ запрещен'</span>);
+        <span class="keyword">return</span>;
+    }
+    
+    <span class="keyword">const</span> <span class="variable">paths</span> = [];
+    
+    <span class="comment">// Собираем пользователей</span>
+    <span class="variable">db</span>.<span class="function">ref</span>(<span class="string">'sites/'</span> + <span class="variable">SITE</span> + <span class="string">'/all_users'</span>).<span class="function">once</span>(<span class="string">'value'</span>, <span class="variable">snap</span> => {
+        <span class="keyword">const</span> <span class="variable">users</span> = <span class="variable">snap</span>.<span class="function">val</span>() || {};
+        <span class="keyword">for</span> (<span class="keyword">const</span> <span class="variable">uid</span> <span class="keyword">in</span> <span class="variable">users</span>) {
+            <span class="keyword">if</span> (<span class="variable">users</span>[<span class="variable">uid</span>].<span class="variable">username</span>) {
+                <span class="variable">paths</span>.<span class="function">push</span>(<span class="variable">users</span>[<span class="variable">uid</span>].<span class="variable">username</span>);
+            }
+        }
+        
+        <span class="comment">// Собираем SEO-страницы</span>
+        <span class="variable">db</span>.<span class="function">ref</span>(<span class="string">'sites/'</span> + <span class="variable">SITE</span> + <span class="string">'/pages_seo'</span>).<span class="function">once</span>(<span class="string">'value'</span>, <span class="variable">snap2</span> => {
+            <span class="keyword">const</span> <span class="variable">pages</span> = <span class="variable">snap2</span>.<span class="function">val</span>() || {};
+            <span class="keyword">for</span> (<span class="keyword">const</span> <span class="variable">key</span> <span class="keyword">in</span> <span class="variable">pages</span>) {
+                <span class="keyword">if</span> (!<span class="variable">paths</span>.<span class="function">includes</span>(<span class="variable">key</span>)) {
+                    <span class="variable">paths</span>.<span class="function">push</span>(<span class="variable">key</span>);
+                }
+            }
+            
+            <span class="comment">// Генерируем XML</span>
+            <span class="keyword">const</span> <span class="variable">baseUrl</span> = <span class="variable">window</span>.<span class="variable">location</span>.<span class="variable">origin</span>;
+            <span class="keyword">let</span> <span class="variable">xml</span> = <span class="string">'&lt;?xml version="1.0" encoding="UTF-8"?&gt;\n'</span>;
+            <span class="variable">xml</span> += <span class="string">'&lt;urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"&gt;\n'</span>;
+            <span class="variable">xml</span> += <span class="string">`  &lt;url&gt;\n    &lt;loc&gt;${baseUrl}/&lt;/loc&gt;\n    &lt;priority&gt;1.0&lt;/priority&gt;\n  &lt;/url&gt;\n`</span>;
+            
+            <span class="variable">paths</span>.<span class="function">forEach</span>(<span class="variable">path</span> => {
+                <span class="keyword">if</span> (<span class="variable">path</span> && <span class="variable">path</span>.<span class="function">trim</span>() !== <span class="string">''</span>) {
+                    <span class="variable">xml</span> += <span class="string">`  &lt;url&gt;\n    &lt;loc&gt;${baseUrl}/${path}&lt;/loc&gt;\n    &lt;priority&gt;0.8&lt;/priority&gt;\n  &lt;/url&gt;\n`</span>;
+                }
+            });
+            
+            <span class="variable">xml</span> += <span class="string">'&lt;/urlset&gt;'</span>;
+            
+            <span class="comment">// Скачиваем</span>
+            <span class="keyword">const</span> <span class="variable">blob</span> = <span class="keyword">new</span> <span class="variable">Blob</span>([<span class="variable">xml</span>], { <span class="variable">type</span>: <span class="string">'application/xml'</span> });
+            <span class="keyword">const</span> <span class="variable">url</span> = <span class="variable">URL</span>.<span class="function">createObjectURL</span>(<span class="variable">blob</span>);
+            <span class="keyword">const</span> <span class="variable">a</span> = <span class="variable">document</span>.<span class="function">createElement</span>(<span class="string">'a'</span>);
+            <span class="variable">a</span>.<span class="variable">href</span> = <span class="variable">url</span>;
+            <span class="variable">a</span>.<span class="variable">download</span> = <span class="string">'sitemap.xml'</span>;
+            <span class="variable">a</span>.<span class="function">click</span>();
+            <span class="variable">URL</span>.<span class="function">revokeObjectURL</span>(<span class="variable">url</span>);
+            
+            <span class="function">alert</span>(<span class="string">`✅ Sitemap сгенерирован! ${paths.length} страниц`</span>);
+        });
+    });
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="robots">
+            <h2>🤖 Robots.txt</h2>
+            <p>Файл <code>robots.txt</code> в корне сайта сообщает поисковым ботам, какие страницы индексировать.</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">🤖 robots.txt</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="comment"># ================================================================
+# ROBOTS.TXT
+# ================================================================</span>
+
+<span class="variable">User-agent</span>: *
+<span class="variable">Allow</span>: /
+
+<span class="variable">Sitemap</span>: <span class="variable">https</span>://<span class="variable">metaimperiya</span>.<span class="variable">com</span>/<span class="variable">sitemap</span>.<span class="variable">xml</span></code></pre>
+            </div>
+        </section>
+
+        <section id="admin-seo">
+            <h2>Управление SEO</h2>
+            <p>Администратор может управлять SEO-данными через специальную панель.</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">🔍 Управление SEO</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="comment">// ================================================================
+// УПРАВЛЕНИЕ SEO
+// ================================================================</span>
+
+<span class="keyword">function</span> <span class="function">adminManageSEO</span>() {
+    <span class="keyword">if</span> (!<span class="variable">isAdmin</span>) {
+        <span class="function">console</span>.<span class="function">warn</span>(<span class="string">'❌ Доступ запрещен'</span>);
+        <span class="keyword">return</span>;
+    }
+    
+    <span class="comment">// Открывает модалку для управления SEO-страницами</span>
+    <span class="comment">// Позволяет задать Title, Description, Keywords</span>
+}
+
+<span class="keyword">function</span> <span class="function">adminSaveSEO</span>() {
+    <span class="keyword">const</span> <span class="variable">path</span> = <span class="variable">document</span>.<span class="function">getElementById</span>(<span class="string">'seoPath'</span>).<span class="variable">value</span>.<span class="function">trim</span>();
+    <span class="keyword">const</span> <span class="variable">title</span> = <span class="variable">document</span>.<span class="function">getElementById</span>(<span class="string">'seoTitleInput'</span>).<span class="variable">value</span>.<span class="function">trim</span>();
+    <span class="keyword">const</span> <span class="variable">description</span> = <span class="variable">document</span>.<span class="function">getElementById</span>(<span class="string">'seoDescriptionInput'</span>).<span class="variable">value</span>.<span class="function">trim</span>();
+    <span class="keyword">const</span> <span class="variable">keywords</span> = <span class="variable">document</span>.<span class="function">getElementById</span>(<span class="string">'seoKeywordsInput'</span>).<span class="variable">value</span>.<span class="function">trim</span>();
+    
+    <span class="keyword">if</span> (!<span class="variable">path</span> || !<span class="variable">title</span>) {
+        <span class="function">alert</span>(<span class="string">'❌ Введите путь и заголовок'</span>);
+        <span class="keyword">return</span>;
+    }
+    
+    <span class="keyword">const</span> <span class="variable">data</span> = {
+        <span class="variable">title</span>: <span class="variable">title</span>,
+        <span class="variable">description</span>: <span class="variable">description</span> || <span class="variable">title</span>,
+        <span class="variable">keywords</span>: <span class="variable">keywords</span> || <span class="variable">title</span>,
+        <span class="variable">updatedAt</span>: <span class="variable">Date</span>.<span class="function">now</span>()
+    };
+    
+    <span class="variable">db</span>.<span class="function">ref</span>(<span class="string">'sites/'</span> + <span class="variable">SITE</span> + <span class="string">'/pages_seo/'</span> + <span class="variable">path</span>).<span class="function">set</span>(<span class="variable">data</span>)
+        .<span class="function">then</span>(() => {
+            <span class="function">alert</span>(<span class="string">'✅ SEO-данные сохранены!'</span>);
+        })
+        .<span class="function">catch</span>(<span class="variable">err</span> => {
+            <span class="function">console</span>.<span class="function">error</span>(<span class="string">'❌ Ошибка:'</span>, <span class="variable">err</span>);
+            <span class="function">alert</span>(<span class="string">'Ошибка сохранения'</span>);
+        });
+}</code></pre>
+            </div>
+        </section>
+
+        <div class="nav-links">
+            <a href="/metaimperiya-docs/pages/admin-panel.html" class="prev-link">⬅️ Админ-панель</a>
+            <a href="/metaimperiya-docs/pages/deployment.html" class="next-link">➡️ Деплой</a>
+        </div>
+    </div>
+</main>
+
+<footer class="docs-footer">
+    <p>© 2024 METAIMPERIYA Docs</p>
+</footer>
+
+<script src="../script.js"></script>
+</body>
+</html>
