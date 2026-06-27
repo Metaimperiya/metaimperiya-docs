@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase | METAIMPERIYA Docs</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<header class="docs-header">
+    <div class="header-inner">
+        <a href="/" class="logo">📚 METAIMPERIYA Docs</a>
+        <nav class="header-nav">
+            <a href="/">Главная</a>
+            <a href="/pages/architecture.html">Архитектура</a>
+            <a href="/pages/firebase-setup.html" class="active">Firebase</a>
+            <a href="https://metaimperiya.com" target="_blank">🌐 Сайт</a>
+        </nav>
+    </div>
+</header>
+
+<main class="docs-container">
+    <aside class="sidebar">
+        <h4>📚 Содержание</h4>
+        <ul>
+            <li><a href="#config">Конфигурация</a></li>
+            <li><a href="#auth">Аутентификация</a></li>
+            <li><a href="#database">База данных</a></li>
+            <li><a href="#storage">Хранилище</a></li>
+        </ul>
+    </aside>
+
+    <div class="docs-content">
+        <h1>🔥 Настройка Firebase</h1>
+
+        <section id="config">
+            <h2>Конфигурация</h2>
+            <p>Вот конфигурация Firebase, которая используется в проекте:</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">📄 Конфигурация Firebase</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="comment">// ================================================================
+// FIREBASE
+// ================================================================</span>
+<span class="keyword">const</span> <span class="variable">FB_CONFIG</span> = {
+    <span class="variable">apiKey</span>: <span class="string">"AIzaSyDCx2wLK2EZJOrUNoXEdWDlYY0e8cOHhtY"</span>,
+    <span class="variable">authDomain</span>: <span class="string">"myecosystem-e6414.firebaseapp.com"</span>,
+    <span class="variable">databaseURL</span>: <span class="string">"https://myecosystem-e6414-default-rtdb.firebaseio.com"</span>,
+    <span class="variable">projectId</span>: <span class="string">"myecosystem-e6414"</span>,
+    <span class="variable">storageBucket</span>: <span class="string">"myecosystem-e6414.firebasestorage.app"</span>,
+    <span class="variable">messagingSenderId</span>: <span class="string">"426302111033"</span>,
+    <span class="variable">appId</span>: <span class="string">"1:426302111033:web:7b39e7026e94f528a13ce8"</span>
+};
+
+<span class="comment">// Инициализация Firebase</span>
+<span class="variable">firebase</span>.<span class="function">initializeApp</span>(<span class="variable">FB_CONFIG</span>);
+<span class="keyword">const</span> <span class="variable">db</span> = <span class="variable">firebase</span>.<span class="function">database</span>();
+<span class="keyword">const</span> <span class="variable">auth</span> = <span class="variable">firebase</span>.<span class="function">auth</span>();
+<span class="keyword">const</span> <span class="variable">storage</span> = <span class="variable">firebase</span>.<span class="function">storage</span>();
+<span class="keyword">const</span> <span class="variable">provider</span> = <span class="keyword">new</span> <span class="variable">firebase</span>.<span class="function">auth</span>.<span class="function">GoogleAuthProvider</span>();</code></pre>
+            </div>
+
+            <div class="info-box">
+                <strong>🔑 Где взять эти данные?</strong>
+                <ol>
+                    <li>Зайди в <a href="https://console.firebase.google.com" target="_blank">Firebase Console</a></li>
+                    <li>Выбери проект <strong>myecosystem-e6414</strong></li>
+                    <li>Нажми на шестеренку ⚙️ → <strong>Project Settings</strong></li>
+                    <li>В разделе <strong>Your apps</strong> → выбери Web-приложение</li>
+                    <li>Скопируй конфигурацию</li>
+                </ol>
+            </div>
+        </section>
+
+        <section id="auth">
+            <h2>🔐 Аутентификация</h2>
+            <p>В проекте используется два способа входа:</p>
+            <ul>
+                <li><strong>Google</strong> — через Firebase Auth</li>
+                <li><strong>Анонимный</strong> — без пароля и email</li>
+            </ul>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">🔐 Код авторизации</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="comment">// ===== AUTH =====</span>
+<span class="comment">// Слушатель состояния</span>
+<span class="variable">auth</span>.<span class="function">onAuthStateChanged</span>(<span class="variable">user</span> => {
+    <span class="keyword">if</span> (<span class="variable">user</span>) {
+        <span class="comment">// Пользователь вошел</span>
+        <span class="variable">USER_UID</span> = <span class="variable">user</span>.<span class="variable">uid</span>;
+        <span class="variable">USER</span> = <span class="variable">user</span>.<span class="variable">displayName</span> || <span class="variable">user</span>.<span class="variable">email</span> || <span class="variable">user</span>.<span class="variable">uid</span>.<span class="function">slice</span>(<span class="number">0</span>, <span class="number">8</span>);
+        <span class="comment">// ... обновляем UI</span>
+    } <span class="keyword">else</span> {
+        <span class="comment">// Показываем окно входа</span>
+        <span class="variable">document</span>.<span class="function">getElementById</span>(<span class="string">'loginModal'</span>).<span class="variable">classList</span>.<span class="function">add</span>(<span class="string">'open'</span>);
+    }
+});
+
+<span class="comment">// Вход через Google</span>
+<span class="variable">document</span>.<span class="function">getElementById</span>(<span class="string">'googleBtn'</span>).<span class="function">addEventListener</span>(<span class="string">'click'</span>, () => {
+    <span class="variable">auth</span>.<span class="function">signInWithPopup</span>(<span class="variable">provider</span>);
+});
+
+<span class="comment">// Анонимный вход</span>
+<span class="keyword">function</span> <span class="function">loginName</span>() {
+    <span class="keyword">const</span> <span class="variable">name</span> = <span class="variable">document</span>.<span class="function">getElementById</span>(<span class="string">'nameInput'</span>).<span class="variable">value</span>.<span class="function">trim</span>();
+    <span class="keyword">if</span> (!<span class="variable">name</span>) { <span class="function">alert</span>(<span class="string">'Введите имя'</span>); <span class="keyword">return</span>; }
+    <span class="variable">auth</span>.<span class="function">signInAnonymously</span>();
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="database">
+            <h2>💾 База данных</h2>
+            <p>Структура Realtime Database:</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">📊 Структура базы данных</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="comment">// Структура Firebase Realtime Database</span>
+<span class="variable">sites</span>/{
+    <span class="variable">metaimperiya</span>/{
+        <span class="variable">all_users</span>/{
+            <span class="variable">uid_1</span>: { <span class="variable">name</span>: <span class="string">"PLAYER Likee"</span>, <span class="variable">email</span>: <span class="string">"..."</span>, <span class="variable">avatarUrl</span>: <span class="string">"..."</span> },
+            <span class="variable">uid_2</span>: { <span class="variable">name</span>: <span class="string">"Jobs Moscow ru"</span>, ... }
+        },
+        <span class="variable">users_by_name</span>/{
+            <span class="variable">playerlikee</span>: <span class="string">"uid_1"</span>,
+            <span class="variable">jobsmoscowru</span>: <span class="string">"uid_2"</span>
+        },
+        <span class="variable">friends</span>/{
+            <span class="variable">uid_1</span>/{
+                <span class="variable">uid_2</span>: <span class="string">"friend"</span>
+            }
+        },
+        <span class="variable">notifications</span>/{
+            <span class="variable">uid_1</span>/{
+                <span class="variable">notif_id</span>: {
+                    <span class="variable">type</span>: <span class="string">"friend_request"</span>,
+                    <span class="variable">from</span>: <span class="string">"uid_2"</span>,
+                    <span class="variable">text</span>: <span class="string">"..."</span>
+                }
+            }
+        },
+        <span class="variable">dms</span>/{
+            <span class="variable">uid_1_uid_2</span>/{
+                <span class="variable">messages</span>/{
+                    <span class="variable">msg_id</span>: { <span class="variable">nick</span>: <span class="string">"..."</span>, <span class="variable">text</span>: <span class="string">"..."</span>, <span class="variable">timestamp</span>: <span class="number">123</span> }
+                }
+            }
+        }
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="storage">
+            <h2>📷 Хранилище (Storage)</h2>
+            <p>Аватарки пользователей хранятся в Firebase Storage:</p>
+            <ul>
+                <li><strong>Путь:</strong> <code>avatars/{uid}/{timestamp}_{filename}</code></li>
+                <li><strong>Максимальный размер:</strong> 5 MB</li>
+                <li><strong>Форматы:</strong> JPG, PNG, GIF</li>
+            </ul>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">📷 Загрузка аватарки</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="keyword">function</span> <span class="function">uploadAvatar</span>() {
+    <span class="keyword">const</span> <span class="variable">input</span> = <span class="variable">document</span>.<span class="function">createElement</span>(<span class="string">'input'</span>);
+    <span class="variable">input</span>.<span class="variable">type</span> = <span class="string">'file'</span>;
+    <span class="variable">input</span>.<span class="variable">accept</span> = <span class="string">'image/*'</span>;
+    <span class="variable">input</span>.<span class="variable">onchange</span> = <span class="keyword">function</span>(<span class="variable">e</span>) {
+        <span class="keyword">const</span> <span class="variable">file</span> = <span class="variable">e</span>.<span class="variable">target</span>.<span class="variable">files</span>[<span class="number">0</span>];
+        <span class="keyword">if</span> (!<span class="variable">file</span>) <span class="keyword">return</span>;
+        <span class="keyword">if</span> (<span class="variable">file</span>.<span class="variable">size</span> > <span class="number">5</span> * <span class="number">1024</span> * <span class="number">1024</span>) { <span class="function">alert</span>(<span class="string">'Максимум 5 МБ'</span>); <span class="keyword">return</span>; }
+        
+        <span class="keyword">const</span> <span class="variable">ref</span> = <span class="variable">storage</span>.<span class="function">ref</span>(<span class="string">'avatars/'</span> + <span class="variable">USER_UID</span> + <span class="string">'/'</span> + <span class="variable">Date</span>.<span class="function">now</span>() + <span class="string">'_'</span> + <span class="variable">file</span>.<span class="variable">name</span>);
+        <span class="variable">ref</span>.<span class="function">put</span>(<span class="variable">file</span>).<span class="function">then</span>(<span class="variable">snap</span> => <span class="variable">snap</span>.<span class="function">ref</span>.<span class="function">getDownloadURL</span>()).<span class="function">then</span>(<span class="variable">url</span> => {
+            <span class="comment">// Сохраняем URL в базу</span>
+            <span class="variable">db</span>.<span class="function">ref</span>(<span class="string">'sites/'</span> + <span class="variable">SITE</span> + <span class="string">'/users/'</span> + <span class="variable">USER_UID</span> + <span class="string">'/avatarUrl'</span>).<span class="function">set</span>(<span class="variable">url</span>);
+            <span class="variable">db</span>.<span class="function">ref</span>(<span class="string">'sites/'</span> + <span class="variable">SITE</span> + <span class="string">'/all_users/'</span> + <span class="variable">USER_UID</span> + <span class="string">'/avatarUrl'</span>).<span class="function">set</span>(<span class="variable">url</span>);
+        });
+    };
+    <span class="variable">input</span>.<span class="function">click</span>();
+}</code></pre>
+            </div>
+        </section>
+
+        <div class="nav-links">
+            <a href="/pages/architecture.html" class="prev-link">⬅️ Архитектура</a>
+            <a href="/pages/user-system.html" class="next-link">➡️ Пользователи</a>
+        </div>
+    </div>
+</main>
+
+<footer class="docs-footer">
+    <p>© 2024 METAIMPERIYA Docs</p>
+</footer>
+
+<script src="../script.js"></script>
+</body>
+</html>
