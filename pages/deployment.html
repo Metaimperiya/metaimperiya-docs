@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Деплой | METAIMPERIYA Docs</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<header class="docs-header">
+    <div class="header-inner">
+        <a href="/metaimperiya-docs/" class="logo">📚 METAIMPERIYA Docs</a>
+        <nav class="header-nav">
+            <a href="/metaimperiya-docs/">Главная</a>
+            <a href="/metaimperiya-docs/pages/architecture.html">Архитектура</a>
+            <a href="/metaimperiya-docs/pages/firebase-setup.html">Firebase</a>
+            <a href="/metaimperiya-docs/pages/user-system.html">Пользователи</a>
+            <a href="/metaimperiya-docs/pages/friends-system.html">Друзья</a>
+            <a href="/metaimperiya-docs/pages/chat-system.html">Чаты</a>
+            <a href="/metaimperiya-docs/pages/admin-panel.html">Админ-панель</a>
+            <a href="/metaimperiya-docs/pages/seo-optimization.html">SEO</a>
+            <a href="/metaimperiya-docs/pages/deployment.html" class="active">Деплой</a>
+            <a href="https://metaimperiya.com" target="_blank">🌐 Сайт</a>
+        </nav>
+    </div>
+</header>
+
+<main class="docs-container">
+    <aside class="sidebar">
+        <h4>📚 Содержание</h4>
+        <ul>
+            <li><a href="#overview">Обзор</a></li>
+            <li><a href="#github-pages">GitHub Pages</a></li>
+            <li><a href="#vercel">Vercel</a></li>
+            <li><a href="#custom-domain">Кастомный домен</a></li>
+            <li><a href="#troubleshooting">Устранение проблем</a></li>
+            <li><a href="#checklist">Чек-лист деплоя</a></li>
+        </ul>
+    </aside>
+
+    <div class="docs-content">
+        <h1>🚀 Деплой проекта</h1>
+
+        <section id="overview">
+            <h2>Обзор</h2>
+            <p>METAIMPERIYA может быть развёрнута несколькими способами. Основные варианты:</p>
+
+            <div class="info-box">
+                <strong>📌 Варианты деплоя:</strong>
+                <ul>
+                    <li><strong>GitHub Pages</strong> — бесплатно, просто, подходит для статики</li>
+                    <li><strong>Vercel</strong> — быстрее, поддержка SPA, кастомные домены</li>
+                    <li><strong>Netlify</strong> — альтернатива Vercel</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="github-pages">
+            <h2>📦 GitHub Pages</h2>
+            <p>Самый простой способ развернуть статический сайт.</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">🚀 Деплой на GitHub Pages</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="comment"># ================================================================
+# ДЕПЛОЙ НА GITHUB PAGES
+# ================================================================</span>
+
+<span class="comment"># 1. Залей код в репозиторий</span>
+<span class="variable">git</span> <span class="variable">add</span> .
+<span class="variable">git</span> <span class="variable">commit</span> -<span class="variable">m</span> <span class="string">"Initial commit"</span>
+<span class="variable">git</span> <span class="variable">push</span> <span class="variable">origin</span> <span class="variable">main</span>
+
+<span class="comment"># 2. Включи GitHub Pages</span>
+<span class="comment"># Settings → Pages → Source → Deploy from a branch</span>
+<span class="comment"># Branch: main → / (root) → Save</span>
+
+<span class="comment"># 3. Добавь .nojekyll (отключает Jekyll)</span>
+<span class="comment"># touch .nojekyll</span>
+<span class="comment"># git add .nojekyll</span>
+<span class="comment"># git commit -m "Add .nojekyll"</span>
+<span class="comment"># git push</span>
+
+<span class="comment"># 4. Сайт будет доступен по адресу:</span>
+<span class="comment"># https://username.github.io/repository/</span></code></pre>
+            </div>
+
+            <div class="info-box warning">
+                <strong>⚠️ Важно!</strong> Если сайт не открывается и выдаёт 404 — проверь:
+                <ul>
+                    <li>Файл <code>index.html</code> лежит в корне репозитория</li>
+                    <li>Добавлен файл <code>.nojekyll</code> (отключает Jekyll)</li>
+                    <li>В настройках Pages выбрана правильная ветка и папка</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="vercel">
+            <h2>⚡ Vercel</h2>
+            <p>Более продвинутый вариант с поддержкой SPA, серверных функций и кастомных доменов.</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">🚀 Деплой на Vercel</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="comment"># ================================================================
+# ДЕПЛОЙ НА VERCEL
+# ================================================================</span>
+
+<span class="comment"># 1. Установи Vercel CLI</span>
+<span class="variable">npm</span> <span class="variable">install</span> -<span class="variable">g</span> <span class="variable">vercel</span>
+
+<span class="comment"># 2. В корне проекта создай vercel.json</span>
+{
+  <span class="string">"rewrites"</span>: [
+    { <span class="string">"source"</span>: <span class="string">"/(.*)"</span>, <span class="string">"destination"</span>: <span class="string">"/index.html"</span> }
+  ]
+}
+
+<span class="comment"># 3. Запусти деплой</span>
+<span class="variable">vercel</span>
+<span class="comment"># Следуй инструкциям в терминале</span>
+
+<span class="comment"># 4. Продакшн-деплой</span>
+<span class="variable">vercel</span> --<span class="variable">prod</span>
+
+<span class="comment"># 5. Сайт будет доступен по адресу:</span>
+<span class="comment"># https://metaimperiya.vercel.app</span></code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">📄 vercel.json (полный)</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code>{
+  <span class="string">"rewrites"</span>: [
+    { <span class="string">"source"</span>: <span class="string">"/(.*)"</span>, <span class="string">"destination"</span>: <span class="string">"/index.html"</span> }
+  ],
+  <span class="string">"headers"</span>: [
+    {
+      <span class="string">"source"</span>: <span class="string">"/(.*)"</span>,
+      <span class="string">"headers"</span>: [
+        {
+          <span class="string">"key"</span>: <span class="string">"X-Content-Type-Options"</span>,
+          <span class="string">"value"</span>: <span class="string">"nosniff"</span>
+        },
+        {
+          <span class="string">"key"</span>: <span class="string">"X-Frame-Options"</span>,
+          <span class="string">"value"</span>: <span class="string">"DENY"</span>
+        },
+        {
+          <span class="string">"key"</span>: <span class="string">"X-XSS-Protection"</span>,
+          <span class="string">"value"</span>: <span class="string">"1; mode=block"</span>
+        }
+      ]
+    }
+  ]
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="custom-domain">
+            <h2>🌐 Кастомный домен</h2>
+            <p>Как привязать свой домен к сайту.</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">🌐 Настройка кастомного домена</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="comment"># ================================================================
+# НАСТРОЙКА КАСТОМНОГО ДОМЕНА
+# ================================================================</span>
+
+<span class="comment"># Для GitHub Pages:</span>
+<span class="comment"># 1. В репозитории создай файл CNAME с доменом</span>
+<span class="variable">echo</span> <span class="string">"metaimperiya.com"</span> &gt; <span class="variable">CNAME</span>
+<span class="variable">git</span> <span class="variable">add</span> <span class="variable">CNAME</span>
+<span class="variable">git</span> <span class="variable">commit</span> -<span class="variable">m</span> <span class="string">"Add CNAME"</span>
+<span class="variable">git</span> <span class="variable">push</span>
+
+<span class="comment"># 2. В настройках DNS добавь записи:</span>
+<span class="comment"># A-запись: @ → 185.199.108.153</span>
+<span class="comment"># A-запись: @ → 185.199.109.153</span>
+<span class="comment"># A-запись: @ → 185.199.110.153</span>
+<span class="comment"># A-запись: @ → 185.199.111.153</span>
+<span class="comment"># CNAME: www → username.github.io</span>
+
+<span class="comment"># Для Vercel:</span>
+<span class="comment"># 1. В панели Vercel → Settings → Domains</span>
+<span class="comment"># 2. Добавь домен metaimperiya.com</span>
+<span class="comment"># 3. В DNS добавь CNAME: @ → cname.vercel-dns.com</span></code></pre>
+            </div>
+        </section>
+
+        <section id="troubleshooting">
+            <h2>🛠️ Устранение проблем</h2>
+
+            <div class="info-box danger">
+                <strong>❌ Сайт выдаёт 404</strong>
+                <ul>
+                    <li>Проверь, что <code>index.html</code> в корне</li>
+                    <li>Добавь файл <code>.nojekyll</code></li>
+                    <li>Перезапусти деплой (Settings → Pages → Save)</li>
+                    <li>Подожди 2-3 минуты</li>
+                </ul>
+            </div>
+
+            <div class="info-box warning">
+                <strong>⚠️ Не загружаются стили/скрипты</strong>
+                <ul>
+                    <li>Проверь пути: <code>href="style.css"</code> → <code>href="/style.css"</code></li>
+                    <li>Для GitHub Pages используй абсолютные пути с названием репозитория</li>
+                    <li>Пример: <code>href="/metaimperiya-docs/style.css"</code></li>
+                </ul>
+            </div>
+
+            <div class="info-box">
+                <strong>❌ Не работает Firebase</strong>
+                <ul>
+                    <li>Проверь, что домен добавлен в Authorized domains в Firebase Console</li>
+                    <li>Проверь правильность конфигурации Firebase</li>
+                    <li>Убедись, что правила безопасности разрешают чтение/запись</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">🔍 Проверка Firebase доменов</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="comment">// Firebase Console → Authentication → Settings → Authorized domains</span>
+<span class="comment">// Добавь:</span>
+<span class="variable">metaimperiya</span>.<span class="variable">com</span>
+<span class="variable">www</span>.<span class="variable">metaimperiya</span>.<span class="variable">com</span>
+<span class="variable">metaimperiya</span>.<span class="variable">github</span>.<span class="variable">io</span>
+<span class="variable">metaimperiya</span>.<span class="variable">vercel</span>.<span class="variable">app</span></code></pre>
+            </div>
+        </section>
+
+        <section id="checklist">
+            <h2>✅ Чек-лист деплоя</h2>
+            <p>Перед деплоем проверь:</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">✅ Чек-лист</span>
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Копировать</button>
+                </div>
+                <pre><code><span class="comment"># ================================================================
+# ЧЕК-ЛИСТ ДЕПЛОЯ
+# ================================================================</span>
+
+<span class="comment"># 1. Файлы</span>
+☐ <span class="variable">index</span>.<span class="variable">html</span> в корне
+☐ <span class="variable">style</span>.<span class="variable">css</span> в корне
+☐ <span class="variable">script</span>.<span class="variable">js</span> в корне
+☐ <span class="variable">.nojekyll</span> в корне (для GitHub Pages)
+☐ <span class="variable">vercel</span>.<span class="variable">json</span> в корне (для Vercel)
+
+<span class="comment"># 2. Ссылки</span>
+☐ Все ссылки ведут на существующие страницы
+☐ Стили подгружаются
+☐ Скрипты работают
+
+<span class="comment"># 3. Firebase</span>
+☐ Конфигурация Firebase актуальна
+☐ Домены добавлены в Authorized domains
+☐ Правила безопасности настроены
+
+<span class="comment"># 4. SEO</span>
+☐ Мета-теги заполнены
+☐ Open Graph работает
+☐ Sitemap сгенерирован
+
+<span class="comment"># 5. Проверка</span>
+☐ Сайт открывается
+☐ Вход через Google работает
+☐ Данные загружаются из Firebase
+☐ Сообщения отправляются и приходят</code></pre>
+            </div>
+        </section>
+
+        <div class="nav-links">
+            <a href="/metaimperiya-docs/pages/seo-optimization.html" class="prev-link">⬅️ SEO</a>
+            <a href="/metaimperiya-docs/" class="next-link">🏠 На главную</a>
+        </div>
+    </div>
+</main>
+
+<footer class="docs-footer">
+    <p>© 2024 METAIMPERIYA Docs</p>
+</footer>
+
+<script src="../script.js"></script>
+</body>
+</html>
